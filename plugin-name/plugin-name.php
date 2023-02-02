@@ -10,7 +10,7 @@
  *
  * @link              http://example.com
  * @since             1.0.0
- * @package           Plugin_Name
+ * @package           Smj_Ulm_Cal
  *
  * @wordpress-plugin
  * Plugin Name:       WordPress Plugin Boilerplate
@@ -43,7 +43,7 @@ define( 'PLUGIN_NAME_VERSION', '1.0.0' );
  */
 function activate_smj_ulm_cal() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-smj-ulm-cal-activator.php';
-	Plugin_Name_Activator::activate();
+	Smj_Ulm_Cal_Activator::activate();
 }
 
 /**
@@ -52,7 +52,7 @@ function activate_smj_ulm_cal() {
  */
 function deactivate_smj_ulm_cal() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-smj-ulm-cal-deactivator.php';
-	Plugin_Name_Deactivator::deactivate();
+	Smj_Ulm_Cal_Deactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_smj_ulm_cal' );
@@ -75,7 +75,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-smj-ulm-cal.php';
  */
 function run_smj_ulm_cal() {
 
-	$plugin = new Plugin_Name();
+	$plugin = new Smj_Ulm_Cal();
 	$plugin->run();
 
 }

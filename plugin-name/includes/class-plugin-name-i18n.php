@@ -9,8 +9,8 @@
  * @link       http://example.com
  * @since      1.0.0
  *
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Smj_Ulm_Cal
+ * @subpackage Smj_Ulm_Cal/includes
  */
 
 /**
@@ -20,11 +20,11 @@
  * so that it is ready for translation.
  *
  * @since      1.0.0
- * @package    Plugin_Name
- * @subpackage Plugin_Name/includes
+ * @package    Smj_Ulm_Cal
+ * @subpackage Smj_Ulm_Cal/includes
  * @author     Your Name <email@example.com>
  */
-class Plugin_Name_i18n {
+class Smj_Ulm_Cal_i18n {
 
 
 	/**
