@@ -73,7 +73,7 @@ class Plugin_Name_Public {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->smj_ulm_cal, plugin_dir_url( __FILE__ ) . 'css/plugin-name-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->smj_ulm_cal, plugin_dir_url( __FILE__ ) . 'css/smj-ulm-cal-public.css', array(), $this->version, 'all' );
 
 	}
 
@@ -96,7 +96,7 @@ class Plugin_Name_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->smj_ulm_cal, plugin_dir_url( __FILE__ ) . 'js/plugin-name-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->smj_ulm_cal, plugin_dir_url( __FILE__ ) . 'js/smj-ulm-cal-public.js', array( 'jquery' ), $this->version, false );
 
 	}
 
