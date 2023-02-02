@@ -6,27 +6,27 @@ A standardized, organized, object-oriented foundation for building high-quality 
 
 The WordPress Plugin Boilerplate includes the following files:
 
-* `.gitignore`. Used to exclude certain files from the repository.
-* `CHANGELOG.md`. The list of changes to the core project.
-* `README.md`. The file that you’re currently reading.
-* A `plugin-name` directory that contains the source code - a fully executable WordPress plugin.
+- `.gitignore`. Used to exclude certain files from the repository.
+- `CHANGELOG.md`. The list of changes to the core project.
+- `README.md`. The file that you’re currently reading.
+- A `plugin-name` directory that contains the source code - a fully executable WordPress plugin.
 
 ## Features
 
-* The Boilerplate is based on the [Plugin API](http://codex.wordpress.org/Plugin_API), [Coding Standards](http://codex.wordpress.org/WordPress_Coding_Standards), and [Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/).
-* All classes, functions, and variables are documented so that you know what you need to change.
-* The Boilerplate uses a strict file organization scheme that corresponds both to the WordPress Plugin Repository structure, and that makes it easy to organize the files that compose the plugin.
-* The project includes a `.pot` file as a starting point for internationalization.
+- The Boilerplate is based on the [Plugin API](http://codex.wordpress.org/Plugin_API), [Coding Standards](http://codex.wordpress.org/WordPress_Coding_Standards), and [Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/).
+- All classes, functions, and variables are documented so that you know what you need to change.
+- The Boilerplate uses a strict file organization scheme that corresponds both to the WordPress Plugin Repository structure, and that makes it easy to organize the files that compose the plugin.
+- The project includes a `.pot` file as a starting point for internationalization.
 
 ## Installation
 
 The Boilerplate can be installed directly into your plugins folder "as-is". You will want to rename it and the classes inside of it to fit your needs. For example, if your plugin is named 'example-me' then:
 
-* rename files from `plugin-name` to `example-me`
-* change `plugin_name` to `example_me`
-* change `plugin-name` to `example-me`
-* change `Plugin_Name` to `Example_Me`
-* change `PLUGIN_NAME_` to `EXAMPLE_ME_`
+- rename files from `plugin-name` to `example-me`
+- change `smj_ulm_cal` to `example_me`
+- change `plugin-name` to `example-me`
+- change `Plugin_Name` to `Example_Me`
+- change `PLUGIN_NAME_` to `EXAMPLE_ME_`
 
 It's safe to activate the plugin at this point. Because the Boilerplate has no real functionality there will be no menu items, meta boxes, or custom post types added until you write the code.
 
@@ -40,9 +40,9 @@ The original launch of this version of the boilerplate included the folder struc
 
 The WordPress Plugin Boilerplate uses a variable to store the text domain used when internationalizing strings throughout the Boilerplate. To take advantage of this method, there are tools that are recommended for providing correct, translatable files:
 
-* [Poedit](http://www.poedit.net/)
-* [makepot](http://i18n.svn.wordpress.org/tools/trunk/)
-* [i18n](https://github.com/grappler/i18n)
+- [Poedit](http://www.poedit.net/)
+- [makepot](http://i18n.svn.wordpress.org/tools/trunk/)
+- [i18n](https://github.com/grappler/i18n)
 
 Any of the above tools should provide you with the proper tooling to internationalize the plugin.
 
@@ -70,9 +70,9 @@ For reference, [here's a discussion](http://make.wordpress.org/themes/2013/03/04
 
 Note that if you include your own classes, or third-party libraries, there are three locations in which said files may go:
 
-* `plugin-name/includes` is where functionality shared between the admin area and the public-facing parts of the site reside
-* `plugin-name/admin` is for all admin-specific functionality
-* `plugin-name/public` is for all public-facing functionality
+- `plugin-name/includes` is where functionality shared between the admin area and the public-facing parts of the site reside
+- `plugin-name/admin` is for all admin-specific functionality
+- `plugin-name/public` is for all public-facing functionality
 
 Note that previous versions of the Boilerplate did not include `Plugin_Name_Loader` but this class is used to register all filters and actions with WordPress.
 
@@ -84,7 +84,7 @@ The previous version of the WordPress Plugin Boilerplate included support for a 
 
 These tools are not part of the core of this Boilerplate, as I see them as being additions, forks, or other contributions to the Boilerplate.
 
-The same is true of using tools like Grunt, Composer, etc. These are all fantastic tools, but not everyone uses them. In order to  keep the core Boilerplate as light as possible, these features have been removed and will be introduced in other editions, and will be listed and maintained on the project homepage.
+The same is true of using tools like Grunt, Composer, etc. These are all fantastic tools, but not everyone uses them. In order to keep the core Boilerplate as light as possible, these features have been removed and will be introduced in other editions, and will be listed and maintained on the project homepage.
 
 # Credits
 

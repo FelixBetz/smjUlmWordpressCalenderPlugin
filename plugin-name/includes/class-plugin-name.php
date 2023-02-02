@@ -44,9 +44,9 @@ class Plugin_Name {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
+	 * @var      string    $smj_ulm_cal    The string used to uniquely identify this plugin.
 	 */
-	protected $plugin_name;
+	protected $smj_ulm_cal;
 
 	/**
 	 * The current version of the plugin.
@@ -72,7 +72,7 @@ class Plugin_Name {
 		} else {
 			$this->version = '1.0.0';
 		}
-		$this->plugin_name = 'plugin-name';
+		$this->smj_ulm_cal = 'plugin-name';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -152,7 +152,7 @@ class Plugin_Name {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Plugin_Name_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Plugin_Name_Admin( $this->get_smj_ulm_cal(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -168,7 +168,7 @@ class Plugin_Name {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Plugin_Name_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Plugin_Name_Public( $this->get_smj_ulm_cal(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
@@ -191,8 +191,8 @@ class Plugin_Name {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_plugin_name() {
-		return $this->plugin_name;
+	public function get_smj_ulm_cal() {
+		return $this->smj_ulm_cal;
 	}
 
 	/**
