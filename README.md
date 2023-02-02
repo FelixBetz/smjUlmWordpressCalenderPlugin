@@ -26,7 +26,7 @@ The Boilerplate can be installed directly into your plugins folder "as-is". You 
 - change `smj_ulm_cal` to `example_me`
 - change `smj-ulm-cal` to `example-me`
 - change `Smj_Ulm_Cal` to `Example_Me`
-- change `PLUGIN_NAME_` to `EXAMPLE_ME_`
+- change `SMJ_ULM_CAL_` to `EXAMPLE_ME_`
 
 It's safe to activate the plugin at this point. Because the Boilerplate has no real functionality there will be no menu items, meta boxes, or custom post types added until you write the code.
 

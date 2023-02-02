@@ -67,8 +67,8 @@ class Smj_Ulm_Cal {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+		if ( defined( 'SMJ_ULM_CAL_VERSION' ) ) {
+			$this->version = SMJ_ULM_CAL_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
