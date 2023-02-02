@@ -96,7 +96,7 @@ class Smj_Ulm_Cal_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->smj_ulm_cal, plugin_dir_url( __FILE__ ) . 'js/smj-ulm-cal-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->smj_ulm_cal, plugin_dir_url( __FILE__ ) . 'js/smj-ulm-cal-public.js', array( 'jquery' ), $this->version, true );
 
 	}
 

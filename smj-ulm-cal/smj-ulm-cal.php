@@ -79,4 +79,12 @@ function run_smj_ulm_cal() {
 	$plugin->run();
 
 }
+
+function shortcode_smj_ulm_cal( $atts ){
+	//insert div for svelte app
+	return '<div id="app"></div>';
+}
+add_shortcode( 'smj-ulm-cal', 'shortcode_smj_ulm_cal' );
+
+
 run_smj_ulm_cal();
