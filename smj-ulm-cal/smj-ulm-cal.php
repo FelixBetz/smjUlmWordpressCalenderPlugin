@@ -84,7 +84,7 @@ function shortcode_smj_ulm_cal( $atts ){
 	//insert div for svelte app
 	return '<div id="app"></div>';
 }
-add_shortcode( 'smj-ulm-cal', 'shortcode_smj_ulm_cal' );
+add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal' );
 
 
 run_smj_ulm_cal();
