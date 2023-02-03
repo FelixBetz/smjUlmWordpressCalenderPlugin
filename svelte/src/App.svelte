@@ -1,19 +1,19 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import type { Calender } from "./lib/interfaces";
+  import type { Event } from "./lib/interfaces";
   import { getCalenderAssets } from "./lib/api";
   import CCalender from "./lib/cCalender.svelte";
 
-  let calenders: Calender[] = [];
+  let events: Event[] = [];
 
   onMount(async () => {
-    calenders = await getCalenderAssets();
+    events = await getCalenderAssets();
   });
 </script>
 
 <div id="calender">
-  {#if calenders.length > 0}
-    <CCalender calender={calenders[0]} />
+  {#if events.length > 0}
+    <CCalender {events} />
   {/if}
 </div>

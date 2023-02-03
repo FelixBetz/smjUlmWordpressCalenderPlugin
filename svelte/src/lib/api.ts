@@ -1,54 +1,51 @@
-import type { IcsFile, Calender, Event } from "./interfaces";
-import ICalParser from "ical-js-parser";
+import type { Event } from "./interfaces";
 
-export function repeatStringToGerman(str: string) {
-  switch (str) {
-    case "DAILY":
-      return "täglich";
-    case "WEEKLY":
-      return "wöchentlich";
-    case "MONTHLY":
-      return "monatlich";
-    case "YEARLY":
-      return "jährlich";
-    default:
-      return "";
+import ICAL from "ical.js";
+
+export function repeatStringToGerman(str) {
+  if (str["DAILY"]) {
+    return "täglich";
   }
+  if (str["WEEKLY"]) {
+    return "wöchentlich";
+  }
+  if (str["MONTHLY"]) {
+    return "monatlich";
+  }
+  if (str["YEARLY"]) {
+    return "jährlich";
+  }
+
+  return "";
 }
 
-export function icsTimestampToDate(icsTimestamp: string) {
-  let year = icsTimestamp.slice(0, 4);
-  let month = icsTimestamp.slice(4, 6);
-  let day = icsTimestamp.slice(6, 8);
+async function dowloadIcsFile(url: string) {
+  let ret_events: ICAL.Event = [];
 
-  let hour = icsTimestamp.slice(9, 11);
-  let minute = icsTimestamp.slice(11, 13);
-  let seconds = icsTimestamp.slice(13, 15);
-
-  return new Date(Date.UTC(+year, +month - 1, +day, +hour, +minute, +seconds));
-}
-
-async function dowloadIcsFile(url: string): Promise<IcsFile> {
   let response = await fetch(url).then((res) => res.text());
-  let rawContent = response;
-  response = response.replaceAll(';TZID="W. Europe Standard Time"', "");
-  return { content: rawContent, json: ICalParser.toJSON(response) };
+  let jcalData = ICAL.parse(response);
+  var comp = new ICAL.Component(jcalData);
+
+  var vevents = comp.getAllSubcomponents("vevent");
+  for (let vevent of vevents) {
+    var event = new ICAL.Event(vevent);
+    ret_events.push(event);
+  }
+
+  return ret_events;
 }
 
-export async function getCalenderAssets(): Promise<Calender[]> {
-  let calenders: Calender[] = [];
-  let cal: Calender = {
-    name: "tets",
-    url: "https://smj-ulm.de/wp-content/uploads/2023/01/2023_smj_ulm_teilnehmer.ics",
-    events: [],
-    content: "",
-  };
-  let resposne = await dowloadIcsFile(cal.url).then((res) => {
-    for (let event of res.json.events) {
-      if (event.dtend == undefined) {
+export async function getCalenderAssets(): Promise<Event[]> {
+  console.log("safdasdf ");
+  let events: Event[] = [];
+  let icsUrl =
+    "https://smj-ulm.de/wp-content/uploads/2023/01/2023_smj_ulm_teilnehmer.ics";
+  let resposne = await dowloadIcsFile(icsUrl).then((res) => {
+    for (let event of res) {
+      /*if (event.dtend == undefined) {
         event.dtend = event.dtstart;
       }
-      console.log(event.summary);
+
       let repeatStr = "";
       let repeatUntil = null;
       if (event.rrule != undefined) {
@@ -56,25 +53,31 @@ export async function getCalenderAssets(): Promise<Calender[]> {
         let repeatSplit = event.rrule.split(";");
         repeatStr = repeatStringToGerman(repeatSplit[0].split("=")[1]);
         repeatUntil = icsTimestampToDate(repeatSplit[1].split("=")[1]);
+      }*/
+
+      console.log(repeatStringToGerman(event.getRecurrenceTypes()));
+
+      let jsonDateStart = event.startDate.toJSON();
+      if (jsonDateStart["isDate"]) {
+        let oneDay = ICAL.Duration.fromSeconds(-24 * 3600);
+        event.endDate.addDuration(oneDay);
       }
 
-      cal.events.push({
+      events.push({
         name: event.summary,
         description: event.description,
-        startDatetime: icsTimestampToDate(event.dtstart.value),
-        endDatetime: icsTimestampToDate(event.dtend.value),
-        isAllDay: event.dtstart.isAllDay,
-        repeatStr: repeatStr,
-        repeatUntil: repeatUntil,
+        startDatetime: event.startDate.toJSDate(),
+        endDatetime: event.endDate.toJSDate(),
+        isAllDay: jsonDateStart["isDate"],
+        repeatStr: repeatStringToGerman(event.getRecurrenceTypes()),
       });
     }
+
     //sort events by startDatetime
-    cal.events.sort((a: Event, b: Event) =>
+    events.sort((a: Event, b: Event) =>
       a.startDatetime < b.startDatetime ? -1 : 1
     );
-
-    calenders[calenders.length] = cal;
-    return calenders;
+    return events;
   });
 
   return resposne;

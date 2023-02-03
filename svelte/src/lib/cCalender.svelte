@@ -1,12 +1,7 @@
 <script lang="ts">
-  import type { Calender, Event } from "./interfaces";
+  import type { Event } from "./interfaces";
 
-  export let calender: Calender = null;
-
-  function dateMinusOneDay(date: Date) {
-    const dayInMillisenconds = 1000 * 60 * 60 * 24; //*1000ms * 60s * 60min *24h = 1 Day
-    return new Date(date.getTime() - dayInMillisenconds);
-  }
+  export let events: Event[] = [];
 
   function formatTime(date: Date) {
     return date.toLocaleTimeString([], {
@@ -37,7 +32,7 @@
 </script>
 
 <div>
-  {#each calender.events as event}
+  {#each events as event}
     <div class="row">
       <div class="col-sm-3">
         <strong>{event.name}</strong>
@@ -50,9 +45,9 @@
           {#if event.isAllDay}
             -<br />
             <strong>
-              {dateMinusOneDay(event.endDatetime).toLocaleDateString()}
+              {event.endDatetime.toLocaleDateString()}
             </strong>,
-            {dayStringByDate(dateMinusOneDay(event.endDatetime))}
+            {dayStringByDate(event.endDatetime)}
           {:else}
             -<br />
             <strong>
@@ -61,10 +56,10 @@
             {dayStringByDate(event.endDatetime)}
           {/if}
         {/if}
-        {#if event.repeatUntil != null}
+        {#if event.repeatStr != ""}
           <br />
           <i>
-            (wiederholt sich {event.repeatStr} bis {event.repeatUntil.toLocaleDateString()})
+            (findet {event.repeatStr} statt)
           </i>
         {/if}
       </div>
