@@ -79,12 +79,61 @@ function run_smj_ulm_cal() {
 	$plugin->run();
 
 }
+run_smj_ulm_cal();
 
-function shortcode_smj_ulm_cal( $atts ){
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		shortcode_smj_ulm_cal_fulllist
+//!
+//! Description:	register shortcode, which displays 
+//!
+//! Parameter: 		$atts
+//!
+//! Return: 		returns <div> with the id for the svelte frontend
+//------------------------------------------------------------------------------
+function shortcode_smj_ulm_cal_fulllist( $atts ){
 	//insert div for svelte app
 	return '<div id="app"></div>';
 }
-add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal' );
+add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal_fulllist' );
 
+//------------------------------------------------------------------------------
+//!
+//! Function: 		shortcode_smj_ulm_cal
+//!
+//! Description:	register hook which downloads .ics calender
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+if (!wp_next_scheduled('smj_ulm_cal__get_calender_hook')) {
+	wp_schedule_event(time(), 'hourly', 'smj_ulm_cal__get_calender_hook');
+}
 
-run_smj_ulm_cal();
+add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
+  
+function smj_ulm_cal__get_calender() {
+	$url = 'https://cloud.smj-ulm.de/remote.php/dav/public-calendars/tDGPoC6XZTyNyRJT?export';
+	$log_text = date("Y-m-d h:i:s");
+	$file_name  = "calender.ics";
+	$dir_path = plugin_dir_path(__FILE__) ."data/";
+
+	//create data directory if not exist
+	mkdir($dir_path);
+
+	// Use file_get_contents() function to get the file
+	// from url and use file_put_contents() function to
+	// save the file by using base name
+	if (file_put_contents($dir_path.$file_name, file_get_contents($url)))
+	{
+		$log_text .=" download OK: ".$file_name ;
+	}
+	else
+	{
+		$log_text .= " download failed";
+	}
+	//log status
+	file_put_contents( $dir_path. 'logs.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
+}
