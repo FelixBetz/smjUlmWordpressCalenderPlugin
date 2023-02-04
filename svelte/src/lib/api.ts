@@ -39,7 +39,7 @@ export async function getCalenderAssets(): Promise<Event[]> {
   console.log("safdasdf ");
   let events: Event[] = [];
   let icsUrl =
-    "https://smj-ulm.de/wp-content/uploads/2023/01/2023_smj_ulm_teilnehmer.ics";
+    "https://smj-ulm.de/wp-content/plugins/smj-ulm-cal/data/calender.ics";
   let resposne = await dowloadIcsFile(icsUrl).then((res) => {
     for (let event of res) {
       /*if (event.dtend == undefined) {

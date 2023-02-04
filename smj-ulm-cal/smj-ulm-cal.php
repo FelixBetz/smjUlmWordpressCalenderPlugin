@@ -116,7 +116,7 @@ add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
   
 function smj_ulm_cal__get_calender() {
 	$url = get_option('smj_ulm_cal_options')['smj_ulm_cal_url'];
-	$log_text = date("Y-m-d h:i:s");
+	$log_text = current_datetime()->format("Y-m-d H:i:s");
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
 
