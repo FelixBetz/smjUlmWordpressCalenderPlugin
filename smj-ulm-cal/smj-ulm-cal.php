@@ -115,7 +115,7 @@ if (!wp_next_scheduled('smj_ulm_cal__get_calender_hook')) {
 add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
   
 function smj_ulm_cal__get_calender() {
-	$url = 'https://cloud.smj-ulm.de/remote.php/dav/public-calendars/tDGPoC6XZTyNyRJT?export';
+	$url = get_option('smj_ulm_cal_options')['smj_ulm_cal_url'];
 	$log_text = date("Y-m-d h:i:s");
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
@@ -128,11 +128,11 @@ function smj_ulm_cal__get_calender() {
 	// save the file by using base name
 	if (file_put_contents($dir_path.$file_name, file_get_contents($url)))
 	{
-		$log_text .=" download OK: ".$file_name ;
+		$log_text .="\tdownload ok";
 	}
 	else
 	{
-		$log_text .= " download failed";
+		$log_text .= "\tdownload failed";
 	}
 	//log status
 	file_put_contents( $dir_path. 'logs.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
