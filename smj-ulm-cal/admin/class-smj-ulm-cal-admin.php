@@ -152,7 +152,7 @@ function smj_ulm_cal_options_page_html() {
 			<code style="vertical-align:middle; font-size: 1.2rem;" id="smj_full_list_copy">[smj-ulm-cal_fulllist]</code>
 			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_copy')">Shortcode in Zwischenablage kopieren</button>
 		</div>
-		<p><i>(Fügen den Shortcode auf deiner Seite/Beitrag ein)</i></p>
+		<p><i>(Füge den Shortcode auf deiner Seite/Beitrag ein)</i></p>
 
 		<script>
 			const copyContent = async (domElement) => {
