@@ -144,6 +144,7 @@ function smj_ulm_cal_options_page_html() {
 	<!--Usage-->
 	<div>
 		<h2>Benutzung </h2>
+		<p>Der Kalender wird jede Stunde aktualisiert. Eine manuelle Aktualisierung kann mit dem Button <i>"Aktualisiere Kalender"</i> durchgeführt werden.</p>
 
 
 		<h4>Vollständige Liste einfügen:</h4>
@@ -182,6 +183,30 @@ function smj_ulm_cal_options_page_html() {
 	<!--Settings From Ende-->
 
 	<hr style="margin: 20px;"/>
+
+	<div class="log_file ">
+		<div style="display: flex;   gap: 10px;">
+
+		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
+			<!-- form fields go here -->
+			<input type="hidden" name="action" value="smj_ulm_cal_refresh_calender">
+			<input class="button button-primary" type="submit" value="Aktualisiere Kalender">
+		</form>
+			
+		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
+			<!-- form fields go here -->
+			<input type="hidden" name="action" value="smj_ulm_cal_delete_cache">
+			<input class="button button-primary" type="submit" value="Lösche Kalender Cache">
+		</form>
+
+		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
+			<!-- form fields go here -->
+			<input type="hidden" name="action" value="smj_ulm_cal_delete_log">
+			<input class="button button-primary" type="submit" value="Lösche Log Datei">
+		</form>
+
+		</div>	
+	</div>
 
 	<!--Log Section-->
 	<div class="log_file ">
@@ -256,3 +281,61 @@ function smj_ulm_cal_setting_name() {
     echo "<input id='smj_ulm_cal_name'   name='smj_ulm_cal_options[smj_ulm_cal_name]' size='100' type='text' value='{$options['smj_ulm_cal_name']}' />";
 }
 
+
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		smj_ulm_cal_delete_cache
+//!
+//! Description:	post request: delte log file
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function smj_ulm_cal_delete_cache() {
+	if ( is_user_logged_in() ) {
+		$dir_path = plugin_dir_path(__FILE__) ."../data/calender.ics";
+		unlink($dir_path);
+		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
+	} 
+}
+add_action('admin_post_smj_ulm_cal_delete_cache', 'smj_ulm_cal_delete_cache');
+
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		smj_ulm_cal_delete_log
+//!
+//! Description:	post request: calender cache
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function smj_ulm_cal_delete_log() {
+	if ( is_user_logged_in() ) {
+		$dir_path = plugin_dir_path(__FILE__) ."../data/logs.txt";
+		unlink($dir_path);
+		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
+	} 
+}
+add_action('admin_post_smj_ulm_cal_delete_log', 'smj_ulm_cal_delete_log');
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		smj_ulm_cal_refresh_calender
+//!
+//! Description:	post request: calender cache
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function smj_ulm_cal_refresh_calender() {
+	if ( is_user_logged_in() ) {
+		smj_ulm_cal__get_calender();
+		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
+	} 
+}
+add_action('admin_post_smj_ulm_cal_refresh_calender', 'smj_ulm_cal_refresh_calender');
