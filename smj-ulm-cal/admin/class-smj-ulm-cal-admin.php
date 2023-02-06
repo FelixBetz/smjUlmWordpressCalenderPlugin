@@ -260,8 +260,16 @@ function smj_ulm_cal_admin_init() {
 
 
 }
-
-
+//------------------------------------------------------------------------------
+//!
+//! Function: 		smj_ulm_cal_options_validate
+//!
+//! Description:	returns html for the smj_ulm_cal page
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
 function smj_ulm_cal_options_validate( $input ) {
 	return $input; //$new_input todo
     $new_input = array();
@@ -274,8 +282,19 @@ function smj_ulm_cal_options_validate( $input ) {
     
     return $new_input;
 }
-
-
+//------------------------------------------------------------------------------
+//!
+//! Function: 		smj_ulm_cal_section_text
+//!
+//! Description:	smj_ulm_cal_section_text
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function smj_ulm_cal_section_text(){
+	//todo
+}
 
 // Display the "URL" setting field
 function smj_ulm_cal_setting_url() {
