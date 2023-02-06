@@ -365,37 +365,45 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		die($e);
 	}
 
-	$events = $ical->eventsFromInterval('12 month');
 	
-	
+	$num_max_events = intval(get_option('smj_ulm_cal_options')['smj_ulm_next_events_num']);
+	if(!is_int($num_max_events) || $num_max_events < 0){
+		$num_max_events = 1;
+	}
 
+	$num_months = intval(get_option('smj_ulm_cal_options')['smj_ulm_next_events_months']);
+	if(!is_int($num_months) ||  $num_months < 0){
+		$num_months = 1;
+	}
+	
 	$ret_string ="";
-	//insert div for svelte app
+
+	$events = $ical->eventsFromInterval($num_months.' month');
 	$event_index = 0;
-	while ($event_index < 30 && $event_index < count($events) ){
+	while ($event_index < $num_max_events && $event_index < count($events) ){
 		$event = $events[$event_index++];
 		//parse allday
 		?>
-<style>
+		<style>
 
-.event-header {
-	display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	justify-content: space-between;
-	color: white;
-	font-weight: bold;
-}
-.event-body {
-	
-	text-align: center;
+		.event-header {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			justify-content: space-between;
+			color: white;
+			font-weight: bold;
+		}
+		.event-body {
+			
+			text-align: center;
 
-}
-</style>
+		}
+		</style>
 
 
 
-<?php
+		<?php
 		
 	//parse allday
 	$isAllDay = $event->dtstart_array[0]["VALUE"] =="DATE";

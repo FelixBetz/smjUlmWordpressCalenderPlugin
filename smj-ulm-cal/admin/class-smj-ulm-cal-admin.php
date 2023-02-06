@@ -174,7 +174,7 @@ function smj_ulm_cal_options_page_html() {
 
 	<!--Settings From-->
 	<div>
-
+		<h1>Einstellungen</h1>
 		<form action="options.php" method="post">
 			<?php
 			// output security fields for the registered setting "wporg_options"
@@ -253,10 +253,15 @@ add_action('admin_init', 'smj_ulm_cal_admin_init');
 function smj_ulm_cal_admin_init() {
     register_setting('smj_ulm_cal_options', 'smj_ulm_cal_options', 'smj_ulm_cal_options_validate');
 
-    add_settings_section('smj_ulm_cal_main', 'Einstellungen', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
+    add_settings_section('smj_ulm_cal_all_events', 'Alle Termine', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
 						//id (slug)				//title				//callback print		   //page				//sections
-    add_settings_field('smj_ulm_cal_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting_url', 	'smj_ulm_cal', 'smj_ulm_cal_main');
-    add_settings_field('smj_ulm_cal_name', 	'Name des Kalenders: ', 	'smj_ulm_cal_setting_name', 'smj_ulm_cal', 'smj_ulm_cal_main');
+    add_settings_field('smj_ulm_cal_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting_url', 	'smj_ulm_cal', 'smj_ulm_cal_all_events');
+    add_settings_field('smj_ulm_cal_name', 	'Name des Kalenders: ', 	'smj_ulm_cal_setting_name', 'smj_ulm_cal', 'smj_ulm_cal_all_events');
+
+	add_settings_section('smj_ulm_cal_next_events', 'Nächste Termine:', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
+    add_settings_field('smj_ulm_next_events_num', 	'Maximale Anzahl an Events: ', 	'smj_ulm_cal_setting_next_events_num', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
+    add_settings_field('smj_ulm_next_events_months', 'Zeige nächste Montage;: ', 	'smj_ulm_cal_setting_next_events_months', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
+
 
 
 }
@@ -299,6 +304,7 @@ function smj_ulm_cal_section_text(){
 // Display the "URL" setting field
 function smj_ulm_cal_setting_url() {
     $options = get_option('smj_ulm_cal_options');
+	
     echo "<input id='smj_ulm_cal_url' name='smj_ulm_cal_options[smj_ulm_cal_url]' size='100' type='text' value='{$options['smj_ulm_cal_url']}' />";
 }
 
@@ -307,6 +313,18 @@ function smj_ulm_cal_setting_url() {
 function smj_ulm_cal_setting_name() {
     $options = get_option('smj_ulm_cal_options');
     echo "<input id='smj_ulm_cal_name'   name='smj_ulm_cal_options[smj_ulm_cal_name]' size='100' type='text' value='{$options['smj_ulm_cal_name']}' />";
+}
+
+// Display the "next_events_num" field
+function smj_ulm_cal_setting_next_events_num() {
+    $options = get_option('smj_ulm_cal_options');
+    echo "<input id='smj_ulm_next_events_num'   name='smj_ulm_cal_options[smj_ulm_next_events_num]' size='100' type='text' value='{$options['smj_ulm_next_events_num']}' />";
+
+}
+// Display smj_ulm_next_events_months
+function smj_ulm_cal_setting_next_events_months() {
+    $options = get_option('smj_ulm_cal_options');
+    echo "<input id='smj_ulm_next_events_months'   name='smj_ulm_cal_options[smj_ulm_next_events_months]' size='100' type='text' value='{$options['smj_ulm_next_events_months']}' />";
 }
 
 
