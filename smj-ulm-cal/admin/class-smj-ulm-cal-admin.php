@@ -220,11 +220,13 @@ function smj_ulm_cal_options_page_html() {
 		<h2> Die letzten 10 Einträge in der Log Datei:</h2>
 		<?php
 		$log_file_path = plugin_dir_path(__FILE__) ."../data/logs.txt";
-		$file = file($log_file_path);
-		for ($i = max(0, count($file)-10); $i < count($file); $i++) {
-			$splitted = explode("\t",$file[$i]);
-			echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
-		} 
+		if(file_exists($log_file_path)){
+			$file = file($log_file_path);
+			for ($i = max(0, count($file)-10); $i < count($file); $i++) {
+				$splitted = explode("\t",$file[$i]);
+				echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
+			}
+		}
 		?>
 	</div>
 	<!--Log Section End-->
