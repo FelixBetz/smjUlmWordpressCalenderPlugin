@@ -249,6 +249,12 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		//description row
 		$ret_string .= '<div class="col-sm-4">';
         $ret_string .= $event->description;
+		if($event->location != ""){
+			if($event->description != ""){
+				$ret_string .=",<br>";
+			}
+			$ret_string .=  "<i>(Ort: ".$event->location . ")</i>";
+		}
 		$ret_string .= '</div>';
 
 
