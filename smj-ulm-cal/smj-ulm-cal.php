@@ -106,6 +106,33 @@ function replaceWeekdayWithString($arg_weekday_num){
 
 //------------------------------------------------------------------------------
 //!
+//! Function: 		repeatStringToGerman
+//!
+//! Description:	repeatStringToGerman
+//!
+//! Parameter: 		$arg_weekday_num: expected num 0 to 6
+//!
+//! Return: 		returns germand weekday string by givne weeknum
+//------------------------------------------------------------------------------
+function repeatStringToGerman($repeat_str) {
+	if ($repeat_str == "DAILY") {
+	  return "täglich";
+	}
+	if ($repeat_str == "WEEKLY") {
+	  return "wöchentlich";
+	}
+	if ($repeat_str == "MONTHLY") {
+	  return "monatlich";
+	}
+	if ($repeat_str == "YEARLY") {
+	  return "jährlich";
+	}
+  
+	return "";
+  }
+
+//------------------------------------------------------------------------------
+//!
 //! Function: 		shortcode_smj_ulm_cal_fulllist
 //!
 //! Description:	register shortcode, which displays 
@@ -155,7 +182,14 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		}
 
 
-		$isRepeat = False;
+		$repeat_str =  "";
+
+		if(isset($event->rrule_array[1])){
+
+			$rrule_explode = explode(";",$event->rrule_array[1])[0];
+			$freq_explode = explode("=",$rrule_explode)[1];
+			$repeat_str = repeatStringToGerman($freq_explode );
+		}
 
 		//pretty print calender event
 		/*$ret_string .=  '<div class="row">';
@@ -185,7 +219,9 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 			$ret_string .='<strong>'. $dtend->format('d.m.Y').'</strong>, ';
 			$ret_string .=  replaceWeekdayWithString($dtend->format('w'));
 		}
-
+		if($repeat_str !=""){
+			$ret_string .= "<br /><i>(findet ".$repeat_str." statt)</i>";
+		}
 		$ret_string .=  '</div>';
 		//date column end
 		//////////////////////////////////////////////////////////////////////////////
