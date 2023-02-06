@@ -216,6 +216,12 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 
 		if( $isMulitday){
 			$ret_string .=" -<br />";
+			
+			if($isAllDay){
+				//substract 1 day
+				$dtend = $dtend->modify("-1 day");
+			}
+		
 			$ret_string .='<strong>'. $dtend->format('d.m.Y').'</strong>, ';
 			$ret_string .=  replaceWeekdayWithString($dtend->format('w'));
 		}
