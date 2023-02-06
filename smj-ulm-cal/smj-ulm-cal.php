@@ -88,13 +88,31 @@ use ICal\ICal;
 
 //------------------------------------------------------------------------------
 //!
+//! Function: 		replaceMonthWithString
+//!
+//! Description:	replaceMonthWithString
+//!
+//! Parameter: 		$arg_month_num: expected num 1 to 612
+//!
+//! Return: 		returns german month string by given weeknum
+//------------------------------------------------------------------------------
+function replaceMonthWithString($arg_month_num){
+	$WEEKDAYS = array(  "Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez");
+	if($arg_month_num < 1 ||$arg_month_num > 12){
+		return "";
+	}
+	return $WEEKDAYS[$arg_month_num-1];
+}
+
+//------------------------------------------------------------------------------
+//!
 //! Function: 		replaceWeekdayWithString
 //!
 //! Description:	replaceWeekdayWithString
 //!
 //! Parameter: 		$arg_weekday_num: expected num 0 to 6
 //!
-//! Return: 		returns germand weekday string by givne weeknum
+//! Return: 		returns german weekday string by given weeknum
 //------------------------------------------------------------------------------
 function replaceWeekdayWithString($arg_weekday_num){
 	$WEEKDAYS = array(  "Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag");
@@ -315,3 +333,149 @@ function smj_ulm_cal__get_calender() {
 	//log status
 	file_put_contents( $dir_path. 'logs.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
 }
+
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		shortcode_smj_ulm_cal_nextevents
+//!
+//! Description:	register shortcode, which displays 
+//!
+//! Parameter: 		$atts
+//!
+//! Return: 		returns <div> with the id for the svelte frontend
+//------------------------------------------------------------------------------
+function shortcode_smj_ulm_cal_nextevents( $atts ){
+	$file_name  = "calender.ics";
+	$dir_path = plugin_dir_path(__FILE__) ."data/";
+	try {
+		$ical = new ICal($dir_path.$file_name, array(
+			'defaultSpan'                 => 2,     // Default value
+			'defaultTimeZone'             => 'UTC',
+			'defaultWeekStart'            => 'MO',  // Default value
+			'disableCharacterReplacement' => false, // Default value
+			'filterDaysAfter'             => null,  // Default value
+			'filterDaysBefore'            => null,  // Default value
+			'httpUserAgent'               => null,  // Default value
+			'skipRecurrence'              => false, // Default value
+		));
+		// $ical->initFile('ICal.ics');
+		// $ical->initUrl('https://raw.githubusercontent.com/u01jmg3/ics-parser/master/examples/ICal.ics', $username = null, $password = null, $userAgent = null);
+	} catch (\Exception $e) {
+		die($e);
+	}
+
+	$events = $ical->eventsFromInterval('12 month');
+	
+	
+
+	$ret_string ="";
+	//insert div for svelte app
+	$event_index = 0;
+	while ($event_index < 30 && $event_index < count($events) ){
+		$event = $events[$event_index++];
+		//parse allday
+		?>
+<style>
+
+.event-header {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	color: white;
+	font-weight: bold;
+}
+.event-body {
+	
+	text-align: center;
+
+}
+</style>
+
+
+
+<?php
+		
+	//parse allday
+	$isAllDay = $event->dtstart_array[0]["VALUE"] =="DATE";
+
+	//parse multiday
+	if($isAllDay){
+		$timestamp_diff= $event->dtend_array[2]  - $event->dtstart_array[2];
+		$isMulitday = $timestamp_diff > (3600*24);
+	}
+	else{
+		$start_string = explode("T",$event->dtstart)[0];
+		$end_string = explode("T",$event->dtend)[0];
+		$isMulitday =  $start_string != $end_string;
+	}
+
+	//outter div
+	$ret_string .=  '<div class="border border-secondary border-5 bg-secondary m-0 mt-4 mb-4 rounded rounded-3">';
+
+	$dtstart = $ical->iCalDateToDateTime($event->dtstart_array[3]);
+	$dtend = $ical->iCalDateToDateTime($event->dtend_array[3]);
+
+	//header
+	$ret_string .=  '<div class="event-header">';
+	$ret_string .=  '<div style="text-align: left; padding-left: 5px;">'. $dtstart->format('d') .'</div>';
+	$ret_string .=  '<div style="text-align: center;">'.$event->summary .'</div>';
+	$ret_string .=  '<div style="text-align: right;  padding-right: 5px;">'. replaceMonthWithString($dtstart->format('n')) .'</div>';
+	$ret_string .=  '</div>';
+
+	//body
+	$ret_string .=  '<div class="event-body rounded m-2 p-2 border border-2 border-white bg-white"  style="text-align: center;">';
+
+	$ret_string .=  '<div>';
+
+	//date start
+	$ret_string .=  '<strong>'.replaceWeekdayWithString($dtstart->format('w')) .', ';
+	$ret_string .=   $dtstart->format('d.m.Y') .'</strong> ';
+
+	if( $isMulitday){
+		$ret_string .=" <em> bis </em><br>";
+		
+		if($isAllDay){
+			//substract 1 day
+			$dtend = $dtend->modify("-1 day");
+		}
+
+		$ret_string .=  '<strong>'.replaceWeekdayWithString($dtstart->format('w')) .', ';
+		$ret_string .=   $dtstart->format('d.m.Y') .'</strong> ';
+	}
+	
+	$ret_string .=  '</div>'; //date start div
+
+	//display time if not allday
+	if(!$isAllDay)
+	{
+		$ret_string .=  '<div>';
+		$ret_string .=  '<strong>Beginn:</strong> '.$dtstart->format('H:i') .' Uhr ';
+		$ret_string .=  '<strong>Ende:</strong> '.$dtend->format('H:i') .' Uhr';
+		$ret_string .=  '</div>';
+	}
+
+	//location
+	if($event->location != ""){
+		$ret_string .=  '<div><strong>Ort: </strong>'.$event->location .'</div> ';
+	}
+
+	//description
+	if($event->description){
+		$ret_string .=  '<em>'.$event->description .'</em>';
+	}
+
+	//event body content
+	$ret_string .=  '</div>';
+
+	//outter div end
+	$ret_string .=  '</div>';
+
+
+
+	} //while loop end
+
+	return $ret_string;
+}
+add_shortcode( 'smj-ulm-cal_nextevents', 'shortcode_smj_ulm_cal_nextevents' );
