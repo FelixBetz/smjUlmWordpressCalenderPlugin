@@ -173,7 +173,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		//parse multiday
 		if($isAllDay){
 			$timestamp_diff= $event->dtend_array[2]  - $event->dtstart_array[2];
-			$isMulitday = $timestamp_diff >= (3600*24);
+			$isMulitday = $timestamp_diff > (3600*24);
 		}
 		else{
 			$start_string = explode("T",$event->dtstart)[0];
