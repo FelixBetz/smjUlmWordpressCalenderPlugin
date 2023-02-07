@@ -154,10 +154,15 @@ function smj_ulm_cal_options_page_html() {
 		<p>Der Kalender wird jede Stunde aktualisiert. Eine manuelle Aktualisierung kann mit dem Button <i>"Aktualisiere Kalender"</i> durchgeführt werden.</p>
 
 
-		<h4>Vollständige Liste einfügen:</h4>
+		<h4>"Alle Termine" Liste einfügen:</h4>
 		<div >
 			<code style="vertical-align:middle; font-size: 1.2rem;" id="smj_full_list_copy">[smj-ulm-cal_fulllist]</code>
 			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_copy')">Shortcode in Zwischenablage kopieren</button>
+		</div>
+		<h4>"Nächste Termine" Liste einfügen:</h4>
+		<div >
+			<code style="vertical-align:middle; font-size: 1.2rem;" id="smj_next_events_list_copy">[smj-ulm-cal_nextevents]</code>
+			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_next_events_list_copy')">Shortcode in Zwischenablage kopieren</button>
 		</div>
 		<p><i>(Füge den Shortcode auf deiner Seite/Beitrag ein)</i></p>
 
