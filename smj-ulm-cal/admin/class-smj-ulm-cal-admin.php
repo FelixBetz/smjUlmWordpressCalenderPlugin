@@ -265,7 +265,7 @@ function smj_ulm_cal_admin_init() {
 
 	add_settings_section('smj_ulm_cal_next_events', 'Nächste Termine:', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
     add_settings_field('smj_ulm_next_events_num', 	'Maximale Anzahl an Events: ', 	'smj_ulm_cal_setting_next_events_num', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
-    add_settings_field('smj_ulm_next_events_months', 'Zeige nächste Montage;: ', 	'smj_ulm_cal_setting_next_events_months', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
+    add_settings_field('smj_ulm_next_events_months', 'Anzahl Monate, die angezeigt werden sollen: ', 	'smj_ulm_cal_setting_next_events_months', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
 
 
 
