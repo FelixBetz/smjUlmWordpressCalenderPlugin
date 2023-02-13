@@ -406,7 +406,12 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		<?php
 		
 	//parse allday
-	$isAllDay = $event->dtstart_array[0]["VALUE"] =="DATE";
+	if (isset($event->dtstart_array[0]["VALUE"])){
+		$isAllDay = $event->dtstart_array[0]["VALUE"] =="DATE";
+	}
+	else{
+		$isAllDay = NULL;
+	}
 
 	//parse multiday
 	if($isAllDay){
