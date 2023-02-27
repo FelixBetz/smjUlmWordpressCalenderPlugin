@@ -454,8 +454,8 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 			$dtend = $dtend->modify("-1 day");
 		}
 
-		$ret_string .=  '<strong>'.replaceWeekdayWithString($dtstart->format('w')) .', ';
-		$ret_string .=   $dtstart->format('d.m.Y') .'</strong> ';
+		$ret_string .=  '<strong>'.replaceWeekdayWithString($dtend->format('w')) .', ';
+		$ret_string .=   $dtend->format('d.m.Y') .'</strong> ';
 	}
 	
 	$ret_string .=  '</div>'; //date start div
