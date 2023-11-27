@@ -186,7 +186,12 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	//insert div for svelte app
 	foreach ($events as &$event) {
 		//parse allday
-		$isAllDay = $event->dtstart_array[0]["VALUE"] =="DATE";
+		$isAllDay =  false;
+
+	
+		if (array_key_exists("VALUE", $event->dtstart_array[0])) {
+			$isAllDay =  $event->dtstart_array[0]["VALUE"] =="DATE";
+		}
 
 		//parse multiday
 		if($isAllDay){
