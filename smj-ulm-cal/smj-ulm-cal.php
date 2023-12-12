@@ -179,10 +179,57 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		die($e);
 	}
 
-	$events =  $ical->events();
-	$events = $ical->sortEventsWithOrder($events);
+	//parse start and end date
+	$startDate= null;
+	$endDate=null;
+	
+	if (is_array($atts)){
 
+		if (array_key_exists("startdate", $atts) 	) {
+			$startDate = $atts["startdate"];
+
+
+		}
+		
+		
+		if (array_key_exists("enddate", $atts) 	) {
+			$endDate = $atts["enddate"];
+		}
+		
+	}
 	$ret_string ="";
+
+	//take events from startDate to endDate
+	//check if dates != null
+	if($startDate != null && $endDate != null){
+		$events = array();
+		$isStartDateValid =strtotime($startDate) ;
+		$isEndDateValid = strtotime( $endDate) ;
+
+
+		//$ret_string .= "<div>StartDate: ". $isStartDateValid." enddate: ".$isEndDateValid."</div>";
+		//check if valid start date
+		if ($isStartDateValid !== false && $isEndDateValid !==false){
+			$events = $ical->eventsFromRange($startDate, $endDate );
+		}
+		else{
+			$events = array();
+			if(!$isStartDateValid){
+				$ret_string .= "<div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges Start Datum: 	&quot;" .$startDate."&quot;</em></div>";
+			}
+			if(!$isEndDateValid){
+				$ret_string .= "<em><div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges End Datum: 	&quot;" .$endDate."&quot;</em></div>";
+			}	
+		}
+	}
+	// if dates are not valid => take all events of the calender
+	else{
+		$events =  $ical->events();
+		$events = $ical->sortEventsWithOrder($events);
+
+	}
+
+
 	//insert div for svelte app
 	foreach ($events as &$event) {
 		//parse allday
@@ -497,3 +544,4 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 	return $ret_string;
 }
 add_shortcode( 'smj-ulm-cal_nextevents', 'shortcode_smj_ulm_cal_nextevents' );
+
