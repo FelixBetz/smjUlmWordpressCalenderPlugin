@@ -154,16 +154,34 @@ function smj_ulm_cal_options_page_html() {
 		<p>Der Kalender wird jede Stunde aktualisiert. Eine manuelle Aktualisierung kann mit dem Button <i>"Aktualisiere Kalender"</i> durchgeführt werden.</p>
 
 
-		<h4>"Alle Termine" Liste einfügen:</h4>
+		<div class="shortcode-title">"Alle Termine" Liste einfügen:</div>
 		<div >
-			<code style="vertical-align:middle; font-size: 1.2rem;" id="smj_full_list_copy">[smj-ulm-cal_fulllist]</code>
+			<code class="shortcode" id="smj_full_list_copy">[smj-ulm-cal_fulllist]</code>
 			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_copy')">Shortcode in Zwischenablage kopieren</button>
 		</div>
-		<h4>"Nächste Termine" Liste einfügen:</h4>
+
+
+		<div class="shortcode-title">"Alle Termine" Liste einfügen mit Start und Enddatum:</div>
+		<div> Das Datum muss im Format <em>YYYY-MM-DD</em> sein!</div>
 		<div >
-			<code style="vertical-align:middle; font-size: 1.2rem;" id="smj_next_events_list_copy">[smj-ulm-cal_nextevents]</code>
+			<code class="shortcode" id="smj_full_list_dates_copy">[smj-ulm-cal_fulllist startDate="2024-01-01" endDate="2024-12-31"]</code>
+			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_dates_copy')">Shortcode in Zwischenablage kopieren</button>
+		</div>
+
+		<div class="shortcode-title">"Alle Termine" Liste einfügen und nach Kategorie filtern:</div>
+		<div> Die Kategorien müssen mit ',' getrennt werden</div>
+		<div >
+			<code class="shortcode"  id="smj_full_list_categories_copy">[smj-ulm-cal_fulllist categories="Zeltlager,Abteilung"]</code>
+			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_categories_copy')">Shortcode in Zwischenablage kopieren</button>
+		</div>
+		
+
+		<div class="shortcode-title">"Nächste Termine" Liste einfügen:</div>
+		<div >
+			<code class="shortcode"  fid="smj_next_events_list_copy">[smj-ulm-cal_nextevents]</code>
 			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_next_events_list_copy')">Shortcode in Zwischenablage kopieren</button>
 		</div>
+		
 		<p><i>(Füge den Shortcode auf deiner Seite/Beitrag ein)</i></p>
 
 		<script>
@@ -219,6 +237,24 @@ function smj_ulm_cal_options_page_html() {
 
 		</div>	
 	</div>
+
+	<!--Categories Section-->
+	<div class="log_file ">
+		<h2> Kategorien im Kalender:</h2>
+		<?php
+		$log_file_path = plugin_dir_path(__FILE__) ."../data/categories.txt";
+		if(file_exists($log_file_path)){
+			$file = file($log_file_path);
+			for ($i = 0; $i < count($file); $i++) {
+				$splitted = explode(";",$file[$i]);
+				$label = $file[$i];
+				$number = $i+9;
+				echo ' <div class="notification"><span>'.$splitted[0].'</span><span class="badge">'.$splitted[1].'</span></div>';
+			}
+		}
+		?>
+	</div>
+	<!--Categories Section End-->
 
 	<!--Log Section-->
 	<div class="log_file ">

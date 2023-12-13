@@ -179,35 +179,35 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		die($e);
 	}
 
-	//parse start and end date
+	//parse attributes
 	$startDate= null;
 	$endDate=null;
+	$categories_filter = array();
 	
 	if (is_array($atts)){
-
 		if (array_key_exists("startdate", $atts) 	) {
 			$startDate = $atts["startdate"];
-
-
 		}
-		
-		
 		if (array_key_exists("enddate", $atts) 	) {
 			$endDate = $atts["enddate"];
 		}
-		
+		if (array_key_exists("categories", $atts) 	) {
+			$splitted_categories = explode(',',$atts["categories"]);
+            foreach($splitted_categories as &$category){
+                array_push($categories_filter,$category);
+            }
+		}
 	}
+	
 	$ret_string ="";
 
 	//take events from startDate to endDate
 	//check if dates != null
 	if($startDate != null && $endDate != null){
 		$events = array();
-		$isStartDateValid =strtotime($startDate) ;
-		$isEndDateValid = strtotime( $endDate) ;
+		$isStartDateValid =strtotime($startDate);
+		$isEndDateValid = strtotime( $endDate);
 
-
-		//$ret_string .= "<div>StartDate: ". $isStartDateValid." enddate: ".$isEndDateValid."</div>";
 		//check if valid start date
 		if ($isStartDateValid !== false && $isEndDateValid !==false){
 			$events = $ical->eventsFromRange($startDate, $endDate );
@@ -226,7 +226,21 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	else{
 		$events =  $ical->events();
 		$events = $ical->sortEventsWithOrder($events);
+	}
 
+
+	//filter events
+	if(count($categories_filter)>0){
+			$events = array_filter($events,
+			function ($pEvent) use($ret_string,$categories_filter){		
+				foreach($categories_filter as &$category){
+					if( in_array(trim($category),$pEvent->get_categories() ) ){
+						return true;
+					}
+				}
+				return false;
+			}
+		);
 	}
 
 
@@ -272,6 +286,9 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		//event col
 		$ret_string .=  '<div class="col-sm-3">';
         $ret_string .=  '<strong>'. $event->summary.'</strong>';
+		if(count($event->get_categories())>0){
+			$ret_string .= '<div>'. $event->get_categories_string() .'</div>';
+		}
 		$ret_string .=  '</div>';
 
 		//////////////////////////////////////////////////////////////////////////////
@@ -384,6 +401,46 @@ function smj_ulm_cal__get_calender() {
 	}
 	//log status
 	file_put_contents( $dir_path. 'logs.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
+
+
+	//parse categories
+	$file_name  = "calender.ics";
+	$dir_path = plugin_dir_path(__FILE__) ."data/";
+	try {
+		$ical = new ICal($dir_path.$file_name, array(
+			'defaultSpan'                 => 2,     // Default value
+			'defaultTimeZone'             => 'UTC',
+			'defaultWeekStart'            => 'MO',  // Default value
+			'disableCharacterReplacement' => false, // Default value
+			'filterDaysAfter'             => null,  // Default value
+			'filterDaysBefore'            => null,  // Default value
+			'httpUserAgent'               => null,  // Default value
+			'skipRecurrence'              => true, // Default value
+		));
+		// $ical->initFile('ICal.ics');
+		// $ical->initUrl('https://raw.githubusercontent.com/u01jmg3/ics-parser/master/examples/ICal.ics', $username = null, $password = null, $userAgent = null);
+	} catch (\Exception $e) {
+		die($e);
+	}
+
+	$events =  $ical->events();
+
+	$categories = array();
+	foreach ($events as &$event) {
+		foreach($event->get_categories() as &$category){
+			array_push($categories,$category);
+		}
+	}
+
+	// Count occurrences of each string
+	$occurrences = array_count_values($categories);
+	// log to categories file,
+	file_put_contents($dir_path. 'categories.txt', ""); //clear content
+	foreach ($occurrences as $key => $value) {
+		$log_text = $key.";".$value;
+		file_put_contents( $dir_path. 'categories.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
+	}
+
 }
 
 

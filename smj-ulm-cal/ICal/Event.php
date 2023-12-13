@@ -128,6 +128,43 @@ class Event
     public $attendee;
 
     /**
+     * get_categories added by @FB@
+     *
+     * @param
+     * @return array() of cattegories
+     */
+    public function get_categories(){
+        
+	    $categories = array();
+
+        if( !isset($this->categories)  || trim($this->categories) === ""){
+            array_push($categories,"no category");
+        }
+        else{   
+		    $splitted_categories = explode(',',$this->categories);
+            foreach($splitted_categories as &$category){
+                array_push($categories,trim($category));
+            }
+        }
+
+        return $categories;
+    }
+
+
+    /**
+     * get_categories_string added by @FB@
+     *
+     * @param
+     * @return categories string
+     */
+    public function get_categories_string(){
+        if( !isset($this->categories)  || trim($this->categories) === ""){
+          return "no category";
+        }
+        return $this->categories;
+    }
+
+    /**
      * Creates the Event object
      *
      * @param  array $data
@@ -185,6 +222,7 @@ class Event
             'TRANSP'        => $this->transp,
             'ORGANISER'     => $this->organizer,
             'ATTENDEE(S)'   => $this->attendee,
+            'CATEGORIES'    => $this->get_categories_string(), //added by @FB@
         );
 
         // Remove any blank values
