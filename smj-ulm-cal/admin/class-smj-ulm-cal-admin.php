@@ -212,6 +212,8 @@ function smj_ulm_cal_delete_cache() {
 	if ( is_user_logged_in() ) {
 		$dir_path = plugin_dir_path(__FILE__) ."../data/calender.ics";
 		unlink($dir_path);
+		$dir_path = plugin_dir_path(__FILE__) ."../data/categories.txt";
+		unlink($dir_path);
 		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
 	} 
 }
