@@ -34,10 +34,10 @@ function smj_ulm_cal_options_page() {
 
     add_menu_page(
         'SMJ Ulm Kalender', //$page_title
-        'Einstellungen', //$menu_title
+        'SMJ Ulm Kalender', //$menu_title
         'manage_options', // $capability
         'smj_ulm_cal_options', // $menu_slug
-        'smj_ulm_cal_options_page_html',  //$function
+        'smj_ulm_cal_options_page_usage_html',  //$function
 		$icon_data_uri, // $icon_url 
         20
     );
@@ -45,34 +45,126 @@ function smj_ulm_cal_options_page() {
 	add_submenu_page(
         'smj_ulm_cal_options', //$parent_slug
         'SMJ Ulm Kalender',		//$page_title
-        'Benutzung',//$menu_title
+        'Einstellungen',//$menu_title
         'manage_options',//$capability
-        'smj_ulm_cal_options__usage',//$menu_slug
-        'smj_ulm_cal_options_page_html',//$//$function
+        'smj_ulm_cal_options__settings',//$menu_slug
+        'smj_ulm_cal_options_page_settings_html',//$//$function 
     );
 }
 
 //------------------------------------------------------------------------------
 //!
-//! Function: 		smj_ulm_cal_options_page_html
+//! Function: 		smj_ulm_cal_options_page_settings_html
 //!
-//! Description:	returns html for the smj_ulm_cal page
+//! Description:	returns html for the smj_ulm_cal settings page
 //!
 //! Parameter: 		None
 //!
 //! Return: 		None
 //------------------------------------------------------------------------------
-function smj_ulm_cal_options_page_html() {
+function smj_ulm_cal_options_page_settings_html() {
 	?>
     <div class="wrap">
 
 	<h1>SMJ Ulm Kalender: Einstellungen</h1>
 
-	<!--Usage-->
+	<!--Settings From-->
 	<div>
-		<h2>Benutzung </h2>
-		<p>Der Kalender wird jede Stunde aktualisiert. Eine manuelle Aktualisierung kann mit dem Button <i>"Aktualisiere Kalender"</i> durchgeführt werden.</p>
+		<form action="options.php" method="post">
+			<?php
+			// output security fields for the registered setting "wporg_options"
+			settings_fields( 'smj_ulm_cal_options' );
+			// output setting sections and their fields
+			// (sections are registered for "wporg", each field is registered to a specific section)
+			do_settings_sections( 'smj_ulm_cal' );
+			// output save settings button
+			submit_button( 'Einstellungen speichern');
+			?>
+		</form>
+	</div>
+	<!--Settings From Ende-->
 
+	<hr style="margin: 20px;"/>
+	<p>Der Kalender wird jede Stunde aktualisiert. Eine manuelle Aktualisierung kann mit dem Button <i>"Aktualisiere Kalender"</i> durchgeführt werden.</p>
+
+	<div class="log_file ">
+		<div style="display: flex;   gap: 10px;">
+
+		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
+			<!-- form fields go here -->
+			<input type="hidden" name="action" value="smj_ulm_cal_refresh_calender">
+			<input class="button button-primary" type="submit" value="Aktualisiere Kalender">
+		</form>
+			
+		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
+			<!-- form fields go here -->
+			<input type="hidden" name="action" value="smj_ulm_cal_delete_cache">
+			<input class="button button-primary" type="submit" value="Lösche Kalender Cache">
+		</form>
+
+		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
+			<!-- form fields go here -->
+			<input type="hidden" name="action" value="smj_ulm_cal_delete_log">
+			<input class="button button-primary" type="submit" value="Lösche Log Datei">
+		</form>
+
+		</div>	
+	</div>
+
+	<!--Categories Section-->
+	<div class="log_file ">
+		<h2> Kategorien im Kalender:</h2>
+		<?php
+		$log_file_path = plugin_dir_path(__FILE__) ."../../data/categories.txt";
+		if(file_exists($log_file_path)){
+			$file = file($log_file_path);
+			for ($i = 0; $i < count($file); $i++) {
+				$splitted = explode(";",$file[$i]);
+				$label = $file[$i];
+				$number = $i+9;
+				echo ' <div class="notification"><span>'.$splitted[0].'</span><span class="badge">'.$splitted[1].'</span></div>';
+			}
+		}
+		?>
+	</div>
+	<!--Categories Section End-->
+
+	<!--Log Section-->
+	<div class="log_file ">
+		<h2> Die letzten 10 Einträge in der Log Datei:</h2>
+		<?php
+		$log_file_path = plugin_dir_path(__FILE__) ."../../data/logs.txt";
+		if(file_exists($log_file_path)){
+			$file = file($log_file_path);
+			for ($i = max(0, count($file)-10); $i < count($file); $i++) {
+				$splitted = explode("\t",$file[$i]);
+				echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
+			}
+		}
+		?>
+	</div>
+	<!--Log Section End-->
+
+	</div>
+    <?php
+}
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		smj_ulm_cal_options_page_usage_html
+//!
+//! Description:	returns html for the smj_ulm_cal usage page
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function smj_ulm_cal_options_page_usage_html() {
+	?>
+	<!--Usage-->
+	<div  class="wrap">
+		<h1>SMJ Ulm Kalender: Benutzung</h1>
+	
 
 		<div class="shortcode-title">"Alle Termine" Liste einfügen:</div>
 		<div >
@@ -112,90 +204,8 @@ function smj_ulm_cal_options_page_html() {
 		</script>
 	</div>
   	<!--Usage-->
-
-	<hr style="margin: 20px;"/>
-
-	<!--Settings From-->
-	<div>
-		<h1>Einstellungen</h1>
-		<form action="options.php" method="post">
-			<?php
-			// output security fields for the registered setting "wporg_options"
-			settings_fields( 'smj_ulm_cal_options' );
-			// output setting sections and their fields
-			// (sections are registered for "wporg", each field is registered to a specific section)
-			do_settings_sections( 'smj_ulm_cal' );
-			// output save settings button
-			submit_button( 'Einstellungen speichern');
-			?>
-		</form>
-	</div>
-	<!--Settings From Ende-->
-
-	<hr style="margin: 20px;"/>
-
-	<div class="log_file ">
-		<div style="display: flex;   gap: 10px;">
-
-		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
-			<!-- form fields go here -->
-			<input type="hidden" name="action" value="smj_ulm_cal_refresh_calender">
-			<input class="button button-primary" type="submit" value="Aktualisiere Kalender">
-		</form>
-			
-		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
-			<!-- form fields go here -->
-			<input type="hidden" name="action" value="smj_ulm_cal_delete_cache">
-			<input class="button button-primary" type="submit" value="Lösche Kalender Cache">
-		</form>
-
-		<form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post">
-			<!-- form fields go here -->
-			<input type="hidden" name="action" value="smj_ulm_cal_delete_log">
-			<input class="button button-primary" type="submit" value="Lösche Log Datei">
-		</form>
-
-		</div>	
-	</div>
-
-	<!--Categories Section-->
-	<div class="log_file ">
-		<h2> Kategorien im Kalender:</h2>
-		<?php
-		$log_file_path = plugin_dir_path(__FILE__) ."../data/categories.txt";
-		if(file_exists($log_file_path)){
-			$file = file($log_file_path);
-			for ($i = 0; $i < count($file); $i++) {
-				$splitted = explode(";",$file[$i]);
-				$label = $file[$i];
-				$number = $i+9;
-				echo ' <div class="notification"><span>'.$splitted[0].'</span><span class="badge">'.$splitted[1].'</span></div>';
-			}
-		}
-		?>
-	</div>
-	<!--Categories Section End-->
-
-	<!--Log Section-->
-	<div class="log_file ">
-		<h2> Die letzten 10 Einträge in der Log Datei:</h2>
-		<?php
-		$log_file_path = plugin_dir_path(__FILE__) ."../data/logs.txt";
-		if(file_exists($log_file_path)){
-			$file = file($log_file_path);
-			for ($i = max(0, count($file)-10); $i < count($file); $i++) {
-				$splitted = explode("\t",$file[$i]);
-				echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
-			}
-		}
-		?>
-	</div>
-	<!--Log Section End-->
-
-	</div>
-    <?php
+	<?php
 }
-
 
 ?>
 
