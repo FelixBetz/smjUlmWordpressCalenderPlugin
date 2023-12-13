@@ -214,7 +214,7 @@ function smj_ulm_cal_delete_cache() {
 		unlink($dir_path);
 		$dir_path = plugin_dir_path(__FILE__) ."../data/categories.txt";
 		unlink($dir_path);
-		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
+		wp_redirect(admin_url("admin.php?page=smj_ulm_cal_options__settings"));
 	} 
 }
 add_action('admin_post_smj_ulm_cal_delete_cache', 'smj_ulm_cal_delete_cache');
@@ -234,7 +234,7 @@ function smj_ulm_cal_delete_log() {
 	if ( is_user_logged_in() ) {
 		$dir_path = plugin_dir_path(__FILE__) ."../data/logs.txt";
 		unlink($dir_path);
-		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
+		wp_redirect(admin_url("admin.php?page=smj_ulm_cal_options__settings"));
 	} 
 }
 add_action('admin_post_smj_ulm_cal_delete_log', 'smj_ulm_cal_delete_log');
@@ -252,7 +252,7 @@ add_action('admin_post_smj_ulm_cal_delete_log', 'smj_ulm_cal_delete_log');
 function smj_ulm_cal_refresh_calender() {
 	if ( is_user_logged_in() ) {
 		smj_ulm_cal__get_calender();
-		wp_redirect(admin_url("?page=smj_ulm_cal_options"));
+		wp_redirect(admin_url("admin.php?page=smj_ulm_cal_options__settings"));
 	} 
 }
 add_action('admin_post_smj_ulm_cal_refresh_calender', 'smj_ulm_cal_refresh_calender');
