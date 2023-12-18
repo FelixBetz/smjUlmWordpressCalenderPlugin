@@ -474,18 +474,35 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		die($e);
 	}
 
-	
-	$num_max_events = intval(get_option('smj_ulm_cal_options')['smj_ulm_next_events_num']);
-	if(!is_int($num_max_events) || $num_max_events < 0){
-		$num_max_events = 1;
+
+	$num_max_events = 5; //default: 5 events
+	$num_months = 12; //default: 12 months
+
+	if (is_array($atts)){
+		if (array_key_exists("num_max_events", $atts) 	) {
+			$num_max_events = intval($atts["num_max_events"]);
+		}
+		if (array_key_exists("num_months", $atts) 	) {
+			$num_months = intval($atts["num_months"]);
+		}
+	}
+	$ret_string ="";
+	if(!is_int($num_max_events) || $num_max_events <= 0){
+		
+		$ret_string .= "<div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges Konfiguration fuer 	&quot;num_max_events	&quot;: 	&quot;" .$atts["num_max_events"]."&quot;</em></div>";
 	}
 
-	$num_months = intval(get_option('smj_ulm_cal_options')['smj_ulm_next_events_months']);
-	if(!is_int($num_months) ||  $num_months < 0){
-		$num_months = 1;
+	if(!is_int($num_months) ||  $num_months <= 0){
+		$ret_string .= "<div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges Konfiguration für 	&quot;num_months&quot;: 	&quot;" .$atts["num_months"]."&quot;</em></div>";
 	}
 	
-	$ret_string ="";
+
+	if($ret_string !== ""){
+		return $ret_string;
+	}
+
+	
+	
 
 	$events = $ical->eventsFromInterval($num_months.' month');
 	$event_index = 0;
