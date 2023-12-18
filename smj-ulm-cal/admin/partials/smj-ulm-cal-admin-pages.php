@@ -197,42 +197,42 @@ function smj_ulm_cal_options_page_usage_html() {
 function smj_ulm_cal_options_page_logs_html() {
 	?>
 
-<div class="wrap">
+	<div class="wrap">
 
-	<h1>SMJ Ulm Kalender: Logs und Statistiken</h1>
-	<!--Categories Section-->
-	<div class="log_file ">
-		<h2> Kategorien im Kalender:</h2>
-		<?php
-		$log_file_path = plugin_dir_path(__FILE__) ."../../data/categories.txt";
-		if(file_exists($log_file_path)){
-			$file = file($log_file_path);
-			for ($i = 0; $i < count($file); $i++) {
-				$splitted = explode(";",$file[$i]);
-				$label = $file[$i];
-				$number = $i+9;
-				echo ' <div class="notification"><span>'.$splitted[0].'</span><span class="badge">'.$splitted[1].'</span></div>';
+		<h1>SMJ Ulm Kalender: Logs und Statistiken</h1>
+		<!--Categories Section-->
+		<div class="log_file ">
+			<h2> Kategorien im Kalender:</h2>
+			<?php
+			$log_file_path = plugin_dir_path(__FILE__) ."../../data/categories.txt";
+			if(file_exists($log_file_path)){
+				$file = file($log_file_path);
+				for ($i = 0; $i < count($file); $i++) {
+					$splitted = explode(";",$file[$i]);
+					$label = $file[$i];
+					$number = $i+9;
+					echo ' <div class="notification"><span>'.$splitted[0].'</span><span class="badge">'.$splitted[1].'</span></div>';
+				}
 			}
-		}
-		?>
-	</div>
-	<!--Categories Section End-->
+			?>
+		</div>
+		<!--Categories Section End-->
 
-	<!--Log Section-->
-	<div class="log_file ">
-		<h2> Die letzten 10 Einträge in der Log Datei:</h2>
-		<?php
-		$log_file_path = plugin_dir_path(__FILE__) ."../../data/logs.txt";
-		if(file_exists($log_file_path)){
-			$file = file($log_file_path);
-			for ($i = max(0, count($file)-10); $i < count($file); $i++) {
-				$splitted = explode("\t",$file[$i]);
-				echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
+		<!--Log Section-->
+		<div class="log_file ">
+			<h2> Die letzten 10 Einträge in der Log Datei:</h2>
+			<?php
+			$log_file_path = plugin_dir_path(__FILE__) ."../../data/logs.txt";
+			if(file_exists($log_file_path)){
+				$file = file($log_file_path);
+				for ($i = max(0, count($file)-10); $i < count($file); $i++) {
+					$splitted = explode("\t",$file[$i]);
+					echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
+				}
 			}
-		}
-		?>
-	</div>
-	<!--Log Section End-->
+			?>
+		</div>
+		<!--Log Section End-->
 	</div>
 	<?php
 }
