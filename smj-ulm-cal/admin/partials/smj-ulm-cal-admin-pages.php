@@ -42,6 +42,16 @@ function smj_ulm_cal_options_page() {
         20
     );
 
+	//uses the same slug name as the main menu page
+	add_submenu_page(
+        'smj_ulm_cal_options', //$parent_slug
+        'SMJ Ulm Kalender',		//$page_title
+        'Benutzung',//$menu_title
+        'manage_options',//$capability
+        'smj_ulm_cal_options',//$menu_slug
+        'smj_ulm_cal_options_page_usage_html',//$//$function 
+    );
+
 	add_submenu_page(
         'smj_ulm_cal_options', //$parent_slug
         'SMJ Ulm Kalender',		//$page_title
