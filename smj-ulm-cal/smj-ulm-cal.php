@@ -477,6 +477,7 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 
 	$num_max_events = 5; //default: 5 events
 	$num_months = 12; //default: 12 months
+	$categories_filter = array();
 
 	if (is_array($atts)){
 		if (array_key_exists("num_max_events", $atts) 	) {
@@ -484,6 +485,13 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		}
 		if (array_key_exists("num_months", $atts) 	) {
 			$num_months = intval($atts["num_months"]);
+		}
+
+		if (array_key_exists("categories", $atts) 	) {
+			$splitted_categories = explode(',',$atts["categories"]);
+            foreach($splitted_categories as &$category){
+                array_push($categories_filter,$category);
+            }
 		}
 	}
 	$ret_string ="";
@@ -501,10 +509,25 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		return $ret_string;
 	}
 
-	
-	
-
 	$events = $ical->eventsFromInterval($num_months.' month');
+
+
+	//filter events
+	if(count($categories_filter)>0){
+		$events = array_filter($events,
+			function ($pEvent) use($categories_filter){		
+				foreach($categories_filter as &$category){
+					if( in_array(trim($category),$pEvent->get_categories() ) ){
+						return true;
+					}
+				}
+				return false;
+			}
+		);
+	}
+	//fix array indices
+	$events = array_values($events);
+
 	$event_index = 0;
 	while ($event_index < $num_max_events && $event_index < count($events) ){
 		$event = $events[$event_index++];
