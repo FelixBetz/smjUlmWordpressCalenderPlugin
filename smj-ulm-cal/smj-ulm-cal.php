@@ -380,10 +380,14 @@ if (!wp_next_scheduled('smj_ulm_cal__get_calender_hook')) {
 add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
   
 function smj_ulm_cal__get_calender() {
-	$url = get_option('smj_ulm_cal_options')['smj_ulm_cal_url'];
+	$url = "";
 	$log_text = current_datetime()->format("Y-m-d H:i:s");
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
+
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal_url'])){
+		$url = get_option('smj_ulm_cal_options')['smj_ulm_cal_url'];
+	}
 
 	//create data directory if not exist
 	mkdir($dir_path);
@@ -391,7 +395,7 @@ function smj_ulm_cal__get_calender() {
 	// Use file_get_contents() function to get the file
 	// from url and use file_put_contents() function to
 	// save the file by using base name
-	if (file_put_contents($dir_path.$file_name, file_get_contents($url)))
+	if ($url !="" && file_put_contents($dir_path.$file_name, file_get_contents($url)))
 	{
 		$log_text .="\tdownload ok";
 	}
