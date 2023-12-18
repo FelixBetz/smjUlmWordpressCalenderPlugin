@@ -142,32 +142,49 @@ function smj_ulm_cal_options_page_usage_html() {
 		<h1>SMJ Ulm Kalender: Benutzung</h1>
 	
 
-		<div class="shortcode-title">"Alle Termine" Liste einfügen:</div>
-		<div >
-			<code class="shortcode" id="smj_full_list_copy">[smj-ulm-cal_fulllist]</code>
-			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_copy')">Shortcode in Zwischenablage kopieren</button>
-		</div>
+		<h2>Alle Termine </h2>
+		<div class="sub-section">
+
+			<div class="shortcode-title">Liste einfügen:</div>
+			<div >
+				<code class="shortcode" id="smj_full_list_copy">[smj-ulm-cal_fulllist]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
 
 
-		<div class="shortcode-title">"Alle Termine" Liste einfügen mit Start und Enddatum:</div>
-		<div> Das Datum muss im Format <em>YYYY-MM-DD</em> sein!</div>
-		<div >
-			<code class="shortcode" id="smj_full_list_dates_copy">[smj-ulm-cal_fulllist startDate="2024-01-01" endDate="2024-12-31"]</code>
-			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_dates_copy')">Shortcode in Zwischenablage kopieren</button>
-		</div>
+			<div class="shortcode-title">Liste einfügen mit Start und Enddatum:</div>
+			<div> Das Datum muss im Format <em>YYYY-MM-DD</em> sein!</div>
+			<div >
+				<code class="shortcode" id="smj_full_list_dates_copy">[smj-ulm-cal_fulllist startDate="2024-01-01" endDate="2024-12-31"]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_dates_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
 
-		<div class="shortcode-title">"Alle Termine" Liste einfügen und nach Kategorie filtern:</div>
-		<div> Die Kategorien müssen mit ',' getrennt werden</div>
-		<div >
-			<code class="shortcode"  id="smj_full_list_categories_copy">[smj-ulm-cal_fulllist categories="Zeltlager,Abteilung"]</code>
-			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_categories_copy')">Shortcode in Zwischenablage kopieren</button>
+			<div class="shortcode-title">Liste einfügen und nach Kategorie filtern:</div>
+			<div> Die Kategorien müssen mit ',' getrennt werden</div>
+			<div >
+				<code class="shortcode"  id="smj_full_list_categories_copy">[smj-ulm-cal_fulllist categories="Zeltlager,Abteilung"]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_categories_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
 		</div>
 		
+		<h2>Nächste Termine: </h2>
+		<div class="sub-section">
 
-		<div class="shortcode-title">"Nächste Termine" Liste einfügen:</div>
-		<div >
-			<code class="shortcode"  fid="smj_next_events_list_copy">[smj-ulm-cal_nextevents]</code>
-			<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_next_events_list_copy')">Shortcode in Zwischenablage kopieren</button>
+			<div class="shortcode-title">Liste einfügen:</div>
+			<div> <em>num_max_events:</em> maximale Termine die angzeigt werden. <em>num_max_events</em> muss eine Zahl <em>>0</em> sein!</div>
+			<div> <em>num_months:</em> maximale Anzahl an Monaten die anzeigt werden. <em>num_months</em> muss eine Zahl <em>>0</em> sein!</div>
+			<div >
+				<code class="shortcode"  fid="smj_next_events_list_copy">[smj-ulm-cal_nextevents num_max_events=5 num_months=3]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_next_events_list_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
+
+
+			<div class="shortcode-title">Liste einfügen und nach Kategorie filtern:</div>
+			<div> Die Kategorien müssen mit ',' getrennt werden</div>
+			<div >
+				<code class="shortcode"  id="smj_events_list_categories_copy">[smj-ulm-cal_nextevents num_max_events=5 num_months=3 categories="Zeltlager,Abteilung"]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_events_list_categories_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
 		</div>
 		
 		<p><i>(Füge den Shortcode auf deiner Seite/Beitrag ein)</i></p>

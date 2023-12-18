@@ -127,11 +127,6 @@ function smj_ulm_cal_admin_init() {
     add_settings_field('smj_ulm_cal_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting_url', 	'smj_ulm_cal', 'smj_ulm_cal_all_events');
     add_settings_field('smj_ulm_cal_name', 	'Name des Kalenders: ', 	'smj_ulm_cal_setting_name', 'smj_ulm_cal', 'smj_ulm_cal_all_events');
 
-	add_settings_section('smj_ulm_cal_next_events', 'Nächste Termine:', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
-    add_settings_field('smj_ulm_next_events_num', 	'Maximale Anzahl an Events: ', 	'smj_ulm_cal_setting_next_events_num', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
-    add_settings_field('smj_ulm_next_events_months', 'Anzahl Monate, die angezeigt werden sollen: ', 	'smj_ulm_cal_setting_next_events_months', 'smj_ulm_cal', 'smj_ulm_cal_next_events');
-
-
 
 }
 //------------------------------------------------------------------------------
@@ -173,29 +168,16 @@ function smj_ulm_cal_section_text(){
 // Display the "URL" setting field
 function smj_ulm_cal_setting_url() {
     $options = get_option('smj_ulm_cal_options');
-	
-    echo "<input id='smj_ulm_cal_url' name='smj_ulm_cal_options[smj_ulm_cal_url]' size='100' type='text' value='{$options['smj_ulm_cal_url']}' />";
+	$master_calender_url = isset($options['smj_ulm_cal_url']) ? esc_attr($options['smj_ulm_cal_url']) : '';
+    echo "<input id='smj_ulm_cal_url' name='smj_ulm_cal_options[smj_ulm_cal_url]' size='100' type='text' value='{$master_calender_url}' />";
 }
-
 
 // Display the "URL" setting field
 function smj_ulm_cal_setting_name() {
     $options = get_option('smj_ulm_cal_options');
-    echo "<input id='smj_ulm_cal_name'   name='smj_ulm_cal_options[smj_ulm_cal_name]' size='100' type='text' value='{$options['smj_ulm_cal_name']}' />";
-}
-
-// Display the "next_events_num" field
-function smj_ulm_cal_setting_next_events_num() {
-    $options = get_option('smj_ulm_cal_options');
-    echo "<input id='smj_ulm_next_events_num'   name='smj_ulm_cal_options[smj_ulm_next_events_num]' size='100' type='text' value='{$options['smj_ulm_next_events_num']}' />";
-
-}
-// Display smj_ulm_next_events_months
-function smj_ulm_cal_setting_next_events_months() {
-    $options = get_option('smj_ulm_cal_options');
-    echo "<input id='smj_ulm_next_events_months'   name='smj_ulm_cal_options[smj_ulm_next_events_months]' size='100' type='text' value='{$options['smj_ulm_next_events_months']}' />";
-}
-
+	$master_calender_name = isset($options['smj_ulm_cal_name']) ? esc_attr($options['smj_ulm_cal_name']) : '';
+    echo "<input id='smj_ulm_cal_name'   name='smj_ulm_cal_options[smj_ulm_cal_name]' size='100' type='text' value='{$master_calender_name}' />";
+ }
 
 
 //------------------------------------------------------------------------------
