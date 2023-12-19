@@ -38,3 +38,17 @@
         padding-left: 2rem;
         margin-bottom: 2rem;
     }
+
+    .sync-calendar{
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .sync-calender-container{
+        display: flex;
+    }
+
+
+    #calendar-sync-list label{
+        padding-left: 20px;
+    }

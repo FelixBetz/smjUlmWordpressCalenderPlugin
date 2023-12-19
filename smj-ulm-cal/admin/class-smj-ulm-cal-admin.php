@@ -123,9 +123,15 @@ function smj_ulm_cal_admin_init() {
     register_setting('smj_ulm_cal_options', 'smj_ulm_cal_options', 'smj_ulm_cal_options_validate');
 
     add_settings_section('smj_ulm_cal_all_events', 'Alle Termine', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
+
+
+	//master calender
 						//id (slug)				//title				//callback print		   //page				//sections
-    add_settings_field('smj_ulm_cal_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting_url', 	'smj_ulm_cal', 'smj_ulm_cal_all_events');
-    add_settings_field('smj_ulm_cal_name', 	'Name des Kalenders: ', 	'smj_ulm_cal_setting_name', 'smj_ulm_cal', 'smj_ulm_cal_all_events');
+    add_settings_field('smj_ulm_cal__master_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting__master_url', 	'smj_ulm_cal', 'smj_ulm_cal_all_events');
+    add_settings_field('smj_ulm_cal__master_name', 	'Name des Kalenders: ', 	'smj_ulm_cal_setting__master_name', 'smj_ulm_cal', 'smj_ulm_cal_all_events');
+
+	//sync calendars
+    add_settings_field('smj_ulm_cal__num_sync_calendars', 	'Anzahl Synchronisation - Kalender : ', 	'smj_ulm_cal_setting__num_sync_calendars', 'smj_ulm_cal', 'smj_ulm_cal_all_events');
 
 
 }
@@ -166,18 +172,84 @@ function smj_ulm_cal_section_text(){
 }
 
 // Display the "URL" setting field
-function smj_ulm_cal_setting_url() {
+function smj_ulm_cal_setting__master_url() {
     $options = get_option('smj_ulm_cal_options');
-	$master_calender_url = isset($options['smj_ulm_cal_url']) ? esc_attr($options['smj_ulm_cal_url']) : '';
-    echo "<input id='smj_ulm_cal_url' name='smj_ulm_cal_options[smj_ulm_cal_url]' size='100' type='text' value='{$master_calender_url}' />";
+	$master_calender_url = isset($options['smj_ulm_cal__master_url']) ? esc_attr($options['smj_ulm_cal__master_url']) : '';
+    echo "<input id='smj_ulm_cal__master_url' name='smj_ulm_cal_options[smj_ulm_cal__master_url]' size='100' type='text' value='{$master_calender_url}' />";
 }
 
 // Display the "URL" setting field
-function smj_ulm_cal_setting_name() {
+function smj_ulm_cal_setting__master_name() {
     $options = get_option('smj_ulm_cal_options');
-	$master_calender_name = isset($options['smj_ulm_cal_name']) ? esc_attr($options['smj_ulm_cal_name']) : '';
-    echo "<input id='smj_ulm_cal_name'   name='smj_ulm_cal_options[smj_ulm_cal_name]' size='100' type='text' value='{$master_calender_name}' />";
+	$master_calender_name = isset($options['smj_ulm_cal__master_name']) ? esc_attr($options['smj_ulm_cal__master_name']) : '';
+    echo "<input id='smj_ulm_cal__master_name'   name='smj_ulm_cal_options[smj_ulm_cal__master_name]' size='100' type='text' value='{$master_calender_name}' />";
  }
+
+
+
+
+// Display the "num_sync_calendars" setting field
+function smj_ulm_cal_setting__num_sync_calendars() {
+    $options = get_option('smj_ulm_cal_options');
+	$smj_ulm_cal__num_sync_calendars = isset($options['smj_ulm_cal__num_sync_calendars']) ? esc_attr($options['smj_ulm_cal__num_sync_calendars']) : 0;
+    echo "<input id='smj_ulm_cal__num_sync_calendars'   name='smj_ulm_cal_options[smj_ulm_cal__num_sync_calendars]' size='10' type='number' value='{$smj_ulm_cal__num_sync_calendars}' />";
+
+
+	$num_calendars =0;
+	
+	if(isset($options["url"])){
+		$num_calendars = count($options["url"]);
+	}
+
+
+	echo "<div id='calendar-sync-list'>";
+	for($i = 0; $i < $smj_ulm_cal__num_sync_calendars;$i++){
+
+	
+		$url = "";
+		$url_key ="url";
+		if(isset($options[$url_key][$i])){
+			$url = $options[$url_key][$i];
+		}
+
+		$categories = "";
+		$categories_key ="categories";
+		if(isset($options[$categories_key][$i])){
+			$categories = $options[$categories_key][$i];
+		}
+
+		$url_subscription = "";
+		$url_subscription_key ="url_subscription";
+		if(isset($options[$url_subscription_key][$i])){
+			$url_subscription = $options[$url_subscription_key][$i];
+		}
+
+		echo "<div class='sync-calendar'>";
+
+		echo "<div>";
+		echo "<label> Url: </label>";
+		echo "<input id='smj_ulm_cal_options[$url_key][]'  size='100' name='smj_ulm_cal_options[$url_key][]' type='text' value='$url' />";
+		echo "</div>";
+		
+		
+
+		echo "<div>";
+
+		echo "<label> Kategorien: </label>";
+		echo "<input id='smj_ulm_cal_options[$categories_key][]'   name='smj_ulm_cal_options[$categories_key][]' type='text' value='$categories' />";
+		
+		echo "<label> Abo Url: </label>";
+		echo "<input id='smj_ulm_cal_options[$url_subscription_key][]'   name='smj_ulm_cal_options[$url_subscription_key][]' type='text' value='$url_subscription' />";
+
+		echo "</div>";
+
+		echo "</div>";
+
+		
+	}
+	echo "</div>";
+ }
+
 
 
 //------------------------------------------------------------------------------

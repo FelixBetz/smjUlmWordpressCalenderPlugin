@@ -385,8 +385,8 @@ function smj_ulm_cal__get_calender() {
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
 
-	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal_url'])){
-		$url = get_option('smj_ulm_cal_options')['smj_ulm_cal_url'];
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__master_url'])){
+		$url = get_option('smj_ulm_cal_options')['smj_ulm_cal__master_url'];
 	}
 
 	//create data directory if not exist
