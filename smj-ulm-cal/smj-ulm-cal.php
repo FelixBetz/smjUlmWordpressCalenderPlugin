@@ -286,9 +286,6 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		//event col
 		$ret_string .=  '<div class="col-sm-3">';
         $ret_string .=  '<strong>'. $event->summary.'</strong>';
-		if(count($event->get_categories())>0){
-			$ret_string .= '<div>'. $event->get_categories_string() .'</div>';
-		}
 		$ret_string .=  '</div>';
 
 		//////////////////////////////////////////////////////////////////////////////
