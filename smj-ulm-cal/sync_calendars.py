@@ -8,8 +8,7 @@ from functools import partial
 import caldav
 
 
-USERNAME = "FelixBetz"
-PASSWORD = "*****"
+LOGFILE_PATH = "/data/sync_logfile.txt"
 
 
 def filter_event_by_category(arg_event, arg_sync_categories):
@@ -29,7 +28,7 @@ def sync_calender(arg_source_events, arg_destination_calendar, arg_sync_categori
     """sync given source event to destination calendar by sync categories"""
     # only filter if at least one sync category
     if len(arg_sync_categories) > 0:
-        # all categories to lowe case
+        # all categories to lower case
         arg_sync_categories = [c.lower() for c in arg_sync_categories]
         filter_func = partial(
             filter_event_by_category, arg_sync_categories=arg_sync_categories
@@ -61,6 +60,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--master-url", type=str, required=True, help="URL for the master"
     )
+    # --user
+    parser.add_argument("--user", type=str, required=True, help="WebDav user")
+    # --password
+    parser.add_argument("--password", type=str, required=True, help="WebDav password")
 
     # --sync-calendars
     parser.add_argument(
@@ -82,14 +85,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     master_url = args.master_url
+    user = args.user
+    password = args.password
     sync_calendars = args.sync_calendars
     sync_categories = args.sync_categories
 
     # Your code logic using the master_url parameter
     # print("Master URL:", sync_categories)
-    with open(
-        os.path.dirname(__file__) + "/out_test.txt", "w", encoding="utf-8"
-    ) as file:
+    with open(os.path.dirname(__file__) + LOGFILE_PATH, "w", encoding="utf-8") as file:
         file.write("Kalender:\n")
         for c in sync_calendars:
             file.write("\t" + c + "\n")
@@ -100,8 +103,8 @@ if __name__ == "__main__":
 
         client = caldav.DAVClient(
             url=master_url,
-            username=USERNAME,
-            password=PASSWORD,
+            username=user,
+            password=password,
         )
         master_calender_events = client.calendar(url=master_url).events()
 
