@@ -93,6 +93,10 @@ if __name__ == "__main__":
     # Your code logic using the master_url parameter
     # print("Master URL:", sync_categories)
     with open(os.path.dirname(__file__) + LOGFILE_PATH, "w", encoding="utf-8") as file:
+        file.write("user: " + user + "\n")
+        file.write("password: " + "*" * len(password) + "\n\n")
+        file.write("master_url: " + master_url + "\n")
+
         file.write("Kalender:\n")
         for c in sync_calendars:
             file.write("\t" + c + "\n")
@@ -112,6 +116,7 @@ if __name__ == "__main__":
         for i, calendar_url in enumerate(sync_calendars):
             calendar = client.calendar(url=calendar_url)
             calendar_categories = sync_categories[i].split(",")
+            calendar_categories = [c.strip() for c in calendar_categories]
             sync_calender(master_calender_events, calendar, calendar_categories)
 
             file.write("\t- " + calendar_url + "\n")

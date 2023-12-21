@@ -360,6 +360,80 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 }
 add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal_fulllist' );
 
+
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		sync_calendars
+//!
+//! Description:	sync calendars via WebDav
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+
+function sync_calendars(){
+	//sync calendars
+	$pythonScript = plugin_dir_path(__FILE__) ."sync_calendars.py";
+
+	$master_url =  false;
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal_setting__master_dav_url'])){
+		$master_url = get_option('smj_ulm_cal_options')['smj_ulm_cal_setting__master_dav_url'];
+	}
+
+	$calendars =  false;
+	if(isset(get_option('smj_ulm_cal_options')['url'])){
+		$calendars = get_option('smj_ulm_cal_options')['url'];
+	}
+
+	$categories =  false;
+	if(isset(get_option('smj_ulm_cal_options')['categories'])){
+		$categories = get_option('smj_ulm_cal_options')['categories'];
+	}
+
+	$username =  false;
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_user'])){
+		$username = get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_user'];
+	}
+
+	$password = false;
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_password'])){
+		$password = get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_password'];
+	}
+
+	$sync_calendars ="";
+	foreach($calendars as &$calendar){
+		$sync_calendars .= escapeshellarg($calendar)." ";
+	}
+
+	$sync_categories ="";
+	foreach($categories as &$category){
+		$sync_categories .= escapeshellarg($category)." ";
+	}
+
+
+	// Build the command with parameters
+	$command = "python " . escapeshellarg($pythonScript) ;
+	$command .= " --master-url ".escapeshellarg($master_url);
+	$command .= " --user ".escapeshellarg($username);
+	$command .= " --password ".escapeshellarg($password);
+	$command .= " --sync-calendars ".$sync_calendars;
+	$command .= " --sync-categories ".$sync_categories;
+
+
+
+	//echo $command. "\n";
+
+	// Execute the Python script
+	exec($command, $output, $returnVar);
+
+	// Check the output and return status
+	echo "Output: " . implode("\n", $output) . "\n";
+	echo "Return status: " . $returnVar . "\n";
+
+}
+
 //------------------------------------------------------------------------------
 //!
 //! Function: 		shortcode_smj_ulm_cal
@@ -377,22 +451,23 @@ if (!wp_next_scheduled('smj_ulm_cal__get_calender_hook')) {
 add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
   
 function smj_ulm_cal__get_calender() {
-	$url = "";
+	$subscription_url = "";
 	$log_text = current_datetime()->format("Y-m-d H:i:s");
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
 
-	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__master_url'])){
-		$url = get_option('smj_ulm_cal_options')['smj_ulm_cal__master_url'];
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'])){
+		$subscription_url = get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'];
 	}
 
+	sync_calendars();
 	//create data directory if not exist
 	mkdir($dir_path);
 
 	// Use file_get_contents() function to get the file
 	// from url and use file_put_contents() function to
 	// save the file by using base name
-	if ($url !="" && file_put_contents($dir_path.$file_name, file_get_contents($url)))
+	if ($subscription_url !="" && file_put_contents($dir_path.$file_name, file_get_contents($subscription_url)))
 	{
 		$log_text .="\tdownload ok";
 	}

@@ -127,21 +127,20 @@ function smj_ulm_cal_admin_init() {
 
 	//master calender
 						//id (slug)				//title				//callback print		   //page				//sections
-    add_settings_field('smj_ulm_cal__master_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting__master_url', 	'smj_ulm_cal', 'smj_ulm_cal_master_calendar');
-    add_settings_field('smj_ulm_cal__master_name', 	'Name des Kalenders: ', 	'smj_ulm_cal_setting__master_name', 'smj_ulm_cal', 'smj_ulm_cal_master_calendar');
-
-
-
-
+    add_settings_field('smj_ulm_cal__subscription_url', 	'URL zum .ics Kalender', 	'smj_ulm_cal_setting__subscription_url', 	'smj_ulm_cal', 'smj_ulm_cal_master_calendar');
+    
 
 	add_settings_section('smj_ulm_cal_sync_calendar', 'Kalender Synchronisation ', 'smj_ulm_cal_section_text', 'smj_ulm_cal');
 	
 	//webDav settings
-	add_settings_field('smj_ulm_cal__web_dav_user', 'WebDav Benutzer: ', 'smj_ulm_cal_setting__web_dav_user', 'smj_ulm_cal', 'smj_ulm_cal_sync_calendar');
-	add_settings_field('smj_ulm_cal__web_dav_password', 'WebDav Passwort: ', 'smj_ulm_cal_setting__web_dav_password', 'smj_ulm_cal', 'smj_ulm_cal_sync_calendar'); //todo encrypt password
+	add_settings_field('smj_ulm_cal__web_dav_user', 'CalDav Benutzer: ', 'smj_ulm_cal_setting__web_dav_user', 'smj_ulm_cal', 'smj_ulm_cal_sync_calendar');
+	add_settings_field('smj_ulm_cal__web_dav_password', 'CalDav Passwort: ', 'smj_ulm_cal_setting__web_dav_password', 'smj_ulm_cal', 'smj_ulm_cal_sync_calendar'); //todo encrypt password
+
+	//webDav master calendar
+	add_settings_field('smj_ulm_cal__master_dav_url', 	'CalDav Master Kalendar:', 	'smj_ulm_cal_setting__master_dav_url', 	'smj_ulm_cal', 'smj_ulm_cal_sync_calendar');
 	
 	//sync calendars
-    add_settings_field('smj_ulm_cal__num_sync_calendars','Anzahl Synchronisation - Kalender : ', 'smj_ulm_cal_setting__num_sync_calendars', 'smj_ulm_cal', 'smj_ulm_cal_sync_calendar');
+    add_settings_field('smj_ulm_cal__num_sync_calendars','Anzahl Synchronisation - Kalender: ', 'smj_ulm_cal_setting__num_sync_calendars', 'smj_ulm_cal', 'smj_ulm_cal_sync_calendar');
 
 
 
@@ -184,11 +183,11 @@ function smj_ulm_cal_section_text(){
 	//todo
 }
 
-// Display the "URL" setting field
-function smj_ulm_cal_setting__master_url() {
+// Display the "smj_ulm_cal_setting__subscription_url" setting field
+function smj_ulm_cal_setting__subscription_url() {
     $options = get_option('smj_ulm_cal_options');
-	$master_calender_url = isset($options['smj_ulm_cal__master_url']) ? esc_attr($options['smj_ulm_cal__master_url']) : '';
-    echo "<input id='smj_ulm_cal__master_url' name='smj_ulm_cal_options[smj_ulm_cal__master_url]' size='100' type='text' value='{$master_calender_url}' />";
+	$subscription_url = isset($options['smj_ulm_cal__subscription_url']) ? esc_attr($options['smj_ulm_cal__subscription_url']) : '';
+    echo "<input id='smj_ulm_cal__subscription_url' name='smj_ulm_cal_options[smj_ulm_cal__subscription_url]' size='100' type='text' value='{$subscription_url}' />";
 }
 
 // Display the "URL" setting field
@@ -210,6 +209,14 @@ function smj_ulm_cal_setting__web_dav_password() {
     $options = get_option('smj_ulm_cal_options');
 	$web_dav_user= isset($options['smj_ulm_cal__web_dav_password']) ? esc_attr($options['smj_ulm_cal__web_dav_password']) : '';
     echo "<input id='smj_ulm_cal__web_dav_password'   name='smj_ulm_cal_options[smj_ulm_cal__web_dav_password]' size='100' type='password' value='{$web_dav_user}' />";
+ }
+
+
+// Display the "smj_ulm_cal_setting__master_dav_url" setting field
+function smj_ulm_cal_setting__master_dav_url() {
+    $options = get_option('smj_ulm_cal_options');
+	$web_dav_master_url= isset($options['smj_ulm_cal_setting__master_dav_url']) ? esc_attr($options['smj_ulm_cal_setting__master_dav_url']) : '';
+    echo "<input id='smj_ulm_cal_setting__master_dav_url'   name='smj_ulm_cal_options[smj_ulm_cal_setting__master_dav_url]' size='100' type='text' value='{$web_dav_master_url}' />";
  }
 
 
