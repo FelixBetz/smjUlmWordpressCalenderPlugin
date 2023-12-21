@@ -251,10 +251,10 @@ function smj_ulm_cal_setting__num_sync_calendars() {
 			$categories = $options[$categories_key][$i];
 		}
 
-		$url_subscription = "";
-		$url_subscription_key ="url_subscription";
-		if(isset($options[$url_subscription_key][$i])){
-			$url_subscription = $options[$url_subscription_key][$i];
+		$calendar_name = "";
+		$calendar_name_key ="sync_calendar_name";
+		if(isset($options[$calendar_name_key][$i])){
+			$calendar_name = $options[$calendar_name_key][$i];
 		}
 
 		echo "<div class='sync-calendar'>";
@@ -271,8 +271,8 @@ function smj_ulm_cal_setting__num_sync_calendars() {
 		echo "<label> Kategorien: </label>";
 		echo "<input id='smj_ulm_cal_options[$categories_key][]'   name='smj_ulm_cal_options[$categories_key][]' type='text' value='$categories' />";
 		
-		echo "<label> Abo Url: </label>";
-		echo "<input id='smj_ulm_cal_options[$url_subscription_key][]'   name='smj_ulm_cal_options[$url_subscription_key][]' type='text' value='$url_subscription' />";
+		echo "<label> Kalender Name: </label>";
+		echo "<input id='smj_ulm_cal_options[$calendar_name_key][]'   name='smj_ulm_cal_options[$calendar_name_key][]' type='text' value='$calendar_name' />";
 
 		echo "</div>";
 

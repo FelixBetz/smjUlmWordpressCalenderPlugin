@@ -57,8 +57,8 @@
 					str +=  "<label> Kategorien: </label>";
 					str +=  "<input id='smj_ulm_cal_options[categories][]'   name='smj_ulm_cal_options[categories][]' type='text' value='' />";
 					
-					str +=  "<label> Abo Url: </label>";
-					str +=  "<input id='smj_ulm_cal_options[url_subscription][]'   name='smj_ulm_cal_options[url_subscription][]' type='text' value='' />";
+					str +=  "<label> Kalender Name: </label>";
+					str +=  "<input id='smj_ulm_cal_options[sync_calendar_name][]'   name='smj_ulm_cal_options[sync_calendar_name][]' type='text' value='' />";
 			
 					str +=  "</div>";
 			

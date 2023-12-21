@@ -386,10 +386,19 @@ function sync_calendars(){
 	if(isset(get_option('smj_ulm_cal_options')['url'])){
 		$calendars = get_option('smj_ulm_cal_options')['url'];
 	}
+	$sync_calendars =false;
+	foreach($calendars as &$calendar){
+		$sync_calendars .= escapeshellarg($calendar)." ";
+	}
+
 
 	$categories =  false;
 	if(isset(get_option('smj_ulm_cal_options')['categories'])){
 		$categories = get_option('smj_ulm_cal_options')['categories'];
+	}
+	$sync_categories =false;
+	foreach($categories as &$category){
+		$sync_categories .= escapeshellarg($category)." ";
 	}
 
 	$username =  false;
@@ -401,17 +410,6 @@ function sync_calendars(){
 	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_password'])){
 		$password = get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_password'];
 	}
-
-	$sync_calendars ="";
-	foreach($calendars as &$calendar){
-		$sync_calendars .= escapeshellarg($calendar)." ";
-	}
-
-	$sync_categories ="";
-	foreach($categories as &$category){
-		$sync_categories .= escapeshellarg($category)." ";
-	}
-
 
 	// Build the command with parameters
 	$command = "python " . escapeshellarg($pythonScript) ;
