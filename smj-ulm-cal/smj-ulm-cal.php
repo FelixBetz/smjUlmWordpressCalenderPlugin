@@ -372,15 +372,10 @@ add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal_fulllist' );
 //!
 //! Return: 		None
 //------------------------------------------------------------------------------
-
 function sync_calendars(){
 	//sync calendars
-	$pythonScript = plugin_dir_path(__FILE__) ."sync_calendars.py";
 
-	$master_url =  false;
-	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal_setting__master_dav_url'])){
-		$master_url = get_option('smj_ulm_cal_options')['smj_ulm_cal_setting__master_dav_url'];
-	}
+
 
 	$calendars =  false;
 	if(isset(get_option('smj_ulm_cal_options')['url'])){
@@ -401,34 +396,7 @@ function sync_calendars(){
 		$sync_categories .= escapeshellarg($category)." ";
 	}
 
-	$username =  false;
-	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_user'])){
-		$username = get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_user'];
-	}
 
-	$password = false;
-	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_password'])){
-		$password = get_option('smj_ulm_cal_options')['smj_ulm_cal__web_dav_password'];
-	}
-
-	// Build the command with parameters
-	$command = "python " . escapeshellarg($pythonScript) ;
-	$command .= " --master-url ".escapeshellarg($master_url);
-	$command .= " --user ".escapeshellarg($username);
-	$command .= " --password ".escapeshellarg($password);
-	$command .= " --sync-calendars ".$sync_calendars;
-	$command .= " --sync-categories ".$sync_categories;
-
-
-
-	//echo $command. "\n";
-
-	// Execute the Python script
-	exec($command, $output, $returnVar);
-
-	// Check the output and return status
-	echo "Output: " . implode("\n", $output) . "\n";
-	echo "Return status: " . $returnVar . "\n";
 
 }
 
