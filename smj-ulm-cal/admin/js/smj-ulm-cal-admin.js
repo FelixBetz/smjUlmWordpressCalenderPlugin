@@ -32,10 +32,10 @@
 	// A $( document ).ready() block.
 	$( document ).on('ready', function() {
 
-		let oldValue = $('#smj_ulm_cal__num_sync_calendars').val();
+		let oldValue = $('#smj_ulm_cal__num_output_calendars').val();
 
 
-		$('#smj_ulm_cal__num_sync_calendars').on('change', function() {
+		$('#smj_ulm_cal__num_output_calendars').on('change', function() {
 
 
 			// Your code here
@@ -49,16 +49,13 @@
 			
 					str +=  "<div>";
 					str +=  "<label> Url: </label>";
-					str +=  "<input id='smj_ulm_cal_options[url][]'  size='100' name='smj_ulm_cal_options[url][]' type='text' value='' />";
-					str +=  "</div>";
-					
-					str +=  "<div>";
-			
+					str +=  "<input id='smj_ulm_cal_options[url][]'  name='smj_ulm_cal_options[url][]' type='text' value='' />";
+							
 					str +=  "<label> Kategorien: </label>";
 					str +=  "<input id='smj_ulm_cal_options[categories][]'   name='smj_ulm_cal_options[categories][]' type='text' value='' />";
 					
-					str +=  "<label> Kalender Name: </label>";
-					str +=  "<input id='smj_ulm_cal_options[sync_calendar_name][]'   name='smj_ulm_cal_options[sync_calendar_name][]' type='text' value='' />";
+					str +=  "<label> Name: </label>";
+					str +=  "<input id='smj_ulm_cal_options[calendar_name][]'   name='smj_ulm_cal_options[calendar_name][]' type='text' value='' />";
 			
 					str +=  "</div>";
 			

@@ -364,40 +364,181 @@ add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal_fulllist' );
 
 //------------------------------------------------------------------------------
 //!
-//! Function: 		sync_calendars
+//! Function: 		parse_categories
 //!
-//! Description:	sync calendars via WebDav
+//! Description:	parse_categories from
 //!
 //! Parameter: 		None
 //!
 //! Return: 		None
 //------------------------------------------------------------------------------
-function sync_calendars(){
-	//sync calendars
+function parse_categories($arg_events_lines){
+    $events_categories = array();
 
+    foreach($arg_events_lines as $event){   
+        //parse categorgies
+        $categories = array();  
+        foreach($event as $line){
+            if(str_contains($line,"CATEGORIES:")){
+                $categories_string = explode(':',$line)[1]; 
+                $splitted_categories = explode(',',$categories_string);
+                foreach($splitted_categories as $category){
+                    array_push($categories,trim($category));
+                }
+            }
+        }
+        array_push($events_categories, $categories);
+    }
 
+    return $events_categories;
+}
 
-	$calendars =  false;
-	if(isset(get_option('smj_ulm_cal_options')['url'])){
-		$calendars = get_option('smj_ulm_cal_options')['url'];
+//------------------------------------------------------------------------------
+//!
+//! Function: 		generate_output_calendars
+//!
+//! Description:	generate_output_calendars
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_output_dir_path){
+
+	$output_calendars_log_file ="log.txt";
+
+	//parse calendar names
+	$output_calender_names = array();
+	if(isset(get_option('smj_ulm_cal_options')['calendar_name'])){
+		$option_calendar_names = get_option('smj_ulm_cal_options')['calendar_name'];
+		foreach($option_calendar_names as $calendar_name){
+			array_push($output_calender_names, trim($calendar_name));
+		}
 	}
-	$sync_calendars =false;
-	foreach($calendars as &$calendar){
-		$sync_calendars .= escapeshellarg($calendar)." ";
-	}
-
-
-	$categories =  false;
+	
+	//parse calendar categories
+	$output_calenders_categories = array();
 	if(isset(get_option('smj_ulm_cal_options')['categories'])){
-		$categories = get_option('smj_ulm_cal_options')['categories'];
+		$options_categories = get_option('smj_ulm_cal_options')['categories'];
+		foreach($options_categories as $category){
+			$splitted_categories =explode(",",$category);
+	
+			$calendar_category = array();
+			foreach($splitted_categories as $c){
+					array_push($calendar_category,trim($c));
+			}
+			array_push($output_calenders_categories,$calendar_category);
+
+		}
 	}
-	$sync_categories =false;
-	foreach($categories as &$category){
-		$sync_categories .= escapeshellarg($category)." ";
+
+	//genearte output calendars logfile
+	$log_text =  implode(", ",$output_calender_names).PHP_EOL;
+	$log_text .= PHP_EOL;
+	foreach($output_calenders_categories as $categories){
+
+		$log_text .=  implode(", ",$categories).PHP_EOL;
+	}
+	file_put_contents( $arg_output_dir_path. $output_calendars_log_file, $log_text.PHP_EOL ,  LOCK_EX);
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//parse input calendar
+	$input_calendar_lines = array();
+	$input_events_lines = array();
+
+	$file = fopen($arg_input_dir_path.$arg_file_name, 'r');
+	if ($file) {
+
+		$cnt_line = 0;
+		$event_started = FALSE;
+		$event = array();
+		while (($line = fgets($file)) !== false) {
+			
+			//do not add calendar end => this will be done after evemts are processed
+			if(str_contains($line, 'END:VCALENDAR')){
+
+			}
+			//event start
+			else if(str_contains($line, 'BEGIN:VEVENT')){
+				$event_started = true;
+				$event =  array();
+				array_push($event,$line);
+			}
+			//event end
+			else if(str_contains($line, 'END:VEVENT')){
+				$event_started = false;
+				array_push($event,$line);
+				array_push($input_events_lines,$event);
+
+			}
+			//push to event
+			else if($event_started){
+				array_push($event,$line);
+			}
+			//push to calendarLines
+			else{
+				array_push($input_calendar_lines,$line);
+			}
+
+			$cnt_line++;
+		}
+
+		// Close the file
+		fclose($file);
+	} else {
+		// Handle the case where the file couldn't be opened
+		echo "Unable to open file: $filename";
 	}
 
+	$events_categories = parse_categories($input_events_lines);
+	//
+	///////////////////////////////////////////////////////////////////////////////////////////
 
 
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//create output calendars
+	foreach($output_calender_names as $cal_idx => $calendar){  
+
+		//calendar lines
+		$out_text =  "";
+		foreach ($input_calendar_lines as $line) {
+
+			$REFRESH_INTERVAL ="PT10M";
+
+			if(str_contains($line,"X-WR-CALNAME:")){
+				$out_text .= "X-WR-CALNAME:Termine ".$calendar."(SMJ Ulm)".PHP_EOL;
+			}
+			
+			else if(str_contains($line,"REFRESH-INTERVAL;")){
+				$out_text .= "REFRESH-INTERVAL;VALUE=DURATION:".$REFRESH_INTERVAL.PHP_EOL;
+			}
+			else if(str_contains($line,"X-PUBLISHED-TTL:")){
+				$out_text .= "X-PUBLISHED-TTL:".$REFRESH_INTERVAL.PHP_EOL;
+			}
+			else{
+				$out_text .= $line;
+			}
+		}
+
+		$categories_filter = $output_calenders_categories[$cal_idx];
+		//events
+		foreach($input_events_lines as $event_idx => $event){   
+			//filter events
+			if(count($categories_filter)>0){
+				foreach($categories_filter as $category){
+					if( in_array(trim($category), $events_categories[$event_idx] ) ){
+						$out_text .= implode("" ,$event);
+						break;
+					}
+				}
+			}
+		}
+		
+		//calendar end
+		$out_text .= 'END:VCALENDAR'.PHP_EOL;
+		file_put_contents($arg_output_dir_path.$calendar.".ics",  $out_text ,  LOCK_EX);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -421,14 +562,27 @@ function smj_ulm_cal__get_calender() {
 	$log_text = current_datetime()->format("Y-m-d H:i:s");
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
+	$output_dir_path =$dir_path."out_calendars/";
 
 	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'])){
 		$subscription_url = get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'];
 	}
 
-	sync_calendars();
 	//create data directory if not exist
-	mkdir($dir_path);
+	if (!is_dir($dir_path)) {
+		mkdir($dir_path);
+	}
+
+	//create calendar output directory if not exist
+	if (!is_dir($output_dir_path)) {
+		mkdir($output_dir_path);
+	}
+
+	// Delete all files in output_dir
+	foreach(glob($output_dir_path.'/*') as $file) { 
+		if(is_file($file))  
+			unlink($file);  
+	} 
 
 	// Use file_get_contents() function to get the file
 	// from url and use file_put_contents() function to
@@ -483,6 +637,7 @@ function smj_ulm_cal__get_calender() {
 		file_put_contents( $dir_path. 'categories.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
 	}
 
+	generate_output_calendars($file_name ,$dir_path,$output_dir_path);
 }
 
 
