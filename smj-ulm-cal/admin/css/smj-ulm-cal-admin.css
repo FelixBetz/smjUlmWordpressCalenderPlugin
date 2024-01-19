@@ -52,7 +52,44 @@
         display: flex;
     }
 
-
     #calendar-sync-list label{
         padding-left: 0px;
+    }
+
+    .log-error{
+        color: red;
+        font-weight: bold;
+    }
+
+
+    .statistic-container{
+        display: flex;
+
+        flex-wrap: wrap;
+    }
+
+  
+
+    .statistic-category ul{
+        padding-left: 10px;
+        list-style: inside;
+    }
+
+    .statistic-category{
+        flex: 25%;
+        margin-bottom: 10px;
+      
+    }
+  
+
+    @media (max-width: 1200px) {
+        .statistic-category {
+            flex:50%;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .statistic-category {
+            flex: 100%;
+        }
     }

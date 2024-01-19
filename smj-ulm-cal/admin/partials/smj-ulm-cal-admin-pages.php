@@ -135,14 +135,17 @@ function smj_ulm_cal_options_page_settings_html() {
 
 		<!--Log Section-->
 		<div class="log_file ">
-			<h2> Die letzten 10 Einträge in der Log Datei:</h2>
+			<h2> Log Datei:</h2>
 			<?php
 			$log_file_path = plugin_dir_path(__FILE__) ."../../data/logs.txt";
 			if(file_exists($log_file_path)){
 				$file = file($log_file_path);
-				for ($i = max(0, count($file)-10); $i < count($file); $i++) {
-					$splitted = explode("\t",$file[$i]);
-					echo "<div><strong>".$splitted[0]."</strong>: " .$splitted[1] . "</div>";
+				for ($i = max(0, count($file)-500); $i < count($file); $i++) {
+					$splitted = explode(";",$file[$i]);
+
+					$is_error_class = trim($splitted[0]) == "1" ? 'class="log-error"' : ''; 
+
+					echo "<div $is_error_class><strong>".$splitted[1]."</strong>: " .$splitted[2] . "</div>";
 				}
 			}
 			?>
@@ -247,15 +250,28 @@ function smj_ulm_cal_options_page_statistic_html() {
 		<div class="log_file ">
 			<h2> Kategorien im Kalender:</h2>
 			<?php
-			$log_file_path = plugin_dir_path(__FILE__) ."../../data/categories.txt";
-			if(file_exists($log_file_path)){
-				$file = file($log_file_path);
-				for ($i = 0; $i < count($file); $i++) {
-					$splitted = explode(";",$file[$i]);
-					$label = $file[$i];
-					$number = $i+9;
-					echo ' <div class="notification"><span>'.$splitted[0].'</span><span class="badge">'.$splitted[1].'</span></div>';
+			$statistic_file_path = plugin_dir_path(__FILE__) ."../../data/statistic.txt";
+
+			if(file_exists($statistic_file_path)){
+				$file = file($statistic_file_path);
+
+				echo '<div class="statistic-container">';
+				foreach($file as $line){
+					$splitted_line = explode(";",$line);
+					$category_name = $splitted_line[0];
+					$num_events = count($splitted_line);
+					echo '<div class="statistic-category">';
+
+						echo "<div><strong>&quot;$category_name&quot; (".($num_events-1)." Termine)</strong></div>";
+						echo '<ul>';
+							foreach(array_slice($splitted_line, 1) as $event){
+								echo "<li>". $event."</li>";
+							}
+						echo "</ul>";
+
+					echo "</div>";
 				}
+				echo "</div>";
 			}
 			?>
 		</div>

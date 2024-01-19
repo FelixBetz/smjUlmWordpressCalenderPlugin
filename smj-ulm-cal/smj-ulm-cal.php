@@ -193,7 +193,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		}
 		if (array_key_exists("categories", $atts) 	) {
 			$splitted_categories = explode(',',$atts["categories"]);
-            foreach($splitted_categories as &$category){
+            foreach($splitted_categories as $category){
                 array_push($categories_filter,$category);
             }
 		}
@@ -233,7 +233,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	if(count($categories_filter)>0){
 			$events = array_filter($events,
 			function ($pEvent) use($ret_string,$categories_filter){		
-				foreach($categories_filter as &$category){
+				foreach($categories_filter as $category){
 					if( in_array(trim($category),$pEvent->get_categories() ) ){
 						return true;
 					}
@@ -245,7 +245,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 
 
 	//insert div for svelte app
-	foreach ($events as &$event) {
+	foreach ($events as $event) {
 		//parse allday
 		$isAllDay =  false;
 
@@ -566,10 +566,13 @@ add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
   
 function smj_ulm_cal__get_calender() {
 	$subscription_url = "";
-	$log_text = current_datetime()->format("Y-m-d H:i:s");
+
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
 	$output_dir_path =$dir_path."out_calendars/";
+
+	$log_file_path =  $dir_path. 'logs.txt';
+	$statistic_file_path = $dir_path.'statistic.txt';
 
 	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'])){
 		$subscription_url = get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'];
@@ -591,20 +594,50 @@ function smj_ulm_cal__get_calender() {
 			unlink($file);  
 	} 
 
-	// Use file_get_contents() function to get the file
-	// from url and use file_put_contents() function to
-	// save the file by using base name
-	if ($subscription_url !="" && file_put_contents($dir_path.$file_name, file_get_contents($subscription_url)))
+	//delete statistic file
+	unlink($statistic_file_path);
+
+	//add logfile entry
+	$is_error = false;
+	$log_text = current_datetime()->format("Y-m-d H:i:s").";";
+	if ($subscription_url !="")
 	{
-		$log_text .="\tdownload ok";
+		$file_content = @file_get_contents($subscription_url);
+		if($file_content === FALSE) {
+			$is_error = true;
+		}
+		else{
+			//download calendar
+			file_put_contents($dir_path.$file_name, $file_content);
+		}
 	}
 	else
 	{
-		$log_text .= "\tdownload failed";
+		$is_error = true;
 	}
-	//log status
-	file_put_contents( $dir_path. 'logs.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
 
+
+	$log_text .= $is_error ? "Kalender wurde NICHT aktualisiert" : "Kalender wurde aktualisiert"; 
+	$log_text =($is_error?"1":"0") . ";".$log_text;
+
+
+	$log_file_content = "";
+
+	if(file_exists($log_file_path)){
+		$file = file($log_file_path);
+	$file = array_slice($file,0,24*7); // keep log entries for 24h * 7 days => 1 week
+		$log_file_content = implode("",$file);
+	}
+
+	$log_text .=PHP_EOL.$log_file_content;
+	//log status
+	file_put_contents($log_file_path, $log_text ,  LOCK_EX);
+
+
+	//exit function if calendar download failed
+	if($is_error){
+		return;
+	}
 
 	//parse categories
 	$file_name  = "calender.ics";
@@ -625,24 +658,54 @@ function smj_ulm_cal__get_calender() {
 	} catch (\Exception $e) {
 		die($e);
 	}
-
+	
 	$events =  $ical->events();
-
 	$categories = array();
-	foreach ($events as &$event) {
-		foreach($event->get_categories() as &$category){
+	foreach ($events as $event) {
+		foreach($event->get_categories() as $category){
 			array_push($categories,$category);
 		}
 	}
-
+	
 	// Count occurrences of each string
 	$occurrences = array_count_values($categories);
-	// log to categories file,
-	file_put_contents($dir_path. 'categories.txt', ""); //clear content
-	foreach ($occurrences as $key => $value) {
-		$log_text = $key.";".$value;
-		file_put_contents( $dir_path. 'categories.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
+
+	$events_by_category = array();
+	foreach($occurrences  as $key => $value){
+        $events_by_category[$key] = array();
 	}
+
+    //add events to categories
+    foreach ($events as $event) {
+		foreach($event->get_categories() as $category){
+            $dtstart = $ical->iCalDateToDateTime($event->dtstart);
+			array_push(  $events_by_category[$category],$dtstart->format('d.m.Y').": ".$event->summary);
+            
+		}
+	}
+	// log to categories file,
+
+	$idx=0;
+	$statistic_string ="";
+	foreach ($events_by_category as $cat_key => $category) {
+
+		//add category name
+		$statistic_string .= $cat_key.";";;
+
+		$cnt = 0;
+		foreach($category as $event){
+			$statistic_string.=$event;
+			$cnt++;
+
+			if($cnt < count($category)){
+				$statistic_string .= ";";
+			}
+		}
+		$statistic_string .=PHP_EOL;
+
+	}
+
+	file_put_contents( $statistic_file_path, $statistic_string ,  LOCK_EX);
 
 	generate_output_calendars($file_name ,$dir_path,$output_dir_path);
 }
@@ -693,7 +756,7 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 
 		if (array_key_exists("categories", $atts) 	) {
 			$splitted_categories = explode(',',$atts["categories"]);
-            foreach($splitted_categories as &$category){
+            foreach($splitted_categories as $category){
                 array_push($categories_filter,$category);
             }
 		}
@@ -720,7 +783,7 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 	if(count($categories_filter)>0){
 		$events = array_filter($events,
 			function ($pEvent) use($categories_filter){		
-				foreach($categories_filter as &$category){
+				foreach($categories_filter as $category){
 					if( in_array(trim($category),$pEvent->get_categories() ) ){
 						return true;
 					}
