@@ -47,17 +47,15 @@
 				for(let i =0; i < diff; i++){
 					let str =  "<div class='sync-calendar'>";
 			
-					str +=  "<div>";
-					str +=  "<label> Url: </label>";
-					str +=  "<input id='smj_ulm_cal_options[url][]'  name='smj_ulm_cal_options[url][]' type='text' value='' />";
-							
-					str +=  "<label> Kategorien: </label>";
-					str +=  "<input id='smj_ulm_cal_options[categories][]'   name='smj_ulm_cal_options[categories][]' type='text' value='' />";
-					
-					str +=  "<label> Name: </label>";
-					str +=  "<input id='smj_ulm_cal_options[calendar_name][]'   name='smj_ulm_cal_options[calendar_name][]' type='text' value='' />";
-			
-					str +=  "</div>";
+						str +=  "<div>";
+
+							str +=  "<label> Kalendername: </label>";
+							str +=  "<input id='smj_ulm_cal_options[calendar_name][]'	name='smj_ulm_cal_options[calendar_name][]' type='text' value='' />";
+
+							str +=  "<label> Kategorien: </label>";
+							str +=  "<input id='smj_ulm_cal_options[categories][]'   name='smj_ulm_cal_options[categories][]' type='text' value='' />";
+								
+						str +=  "</div>";
 			
 					str +=  "</div>";
 

@@ -206,13 +206,6 @@ function smj_ulm_cal_setting__num_sync_calendars() {
 	echo "<div id='calendar-sync-list'>";
 	for($i = 0; $i < $smj_ulm_cal__num_output_calendars;$i++){
 
-	
-		$url = "";
-		$url_key ="url";
-		if(isset($options[$url_key][$i])){
-			$url = $options[$url_key][$i];
-		}
-
 		$categories = "";
 		$categories_key ="categories";
 		if(isset($options[$categories_key][$i])){
@@ -226,22 +219,15 @@ function smj_ulm_cal_setting__num_sync_calendars() {
 		}
 
 		echo "<div class='sync-calendar'>";
+			echo "<div>";
+				echo "<label> Kalendername: </label>";
+				echo "<input id='smj_ulm_cal_options[$calendar_name_key][]'   name='smj_ulm_cal_options[$calendar_name_key][]' type='text' value='$calendar_name' />";
 
-		echo "<div>";
-		echo "<label> Url: </label>";
-		echo "<input id='smj_ulm_cal_options[$url_key][]'  name='smj_ulm_cal_options[$url_key][]' type='text' value='$url' />";
-
-
-		echo "<label> Kategorien: </label>";
-		echo "<input id='smj_ulm_cal_options[$categories_key][]'   name='smj_ulm_cal_options[$categories_key][]' type='text' value='$categories' />";
+				echo "<label> Kategorien: </label>";
+				echo "<input id='smj_ulm_cal_options[$categories_key][]'   name='smj_ulm_cal_options[$categories_key][]' type='text' value='$categories' />";
 		
-		echo "<label> Name: </label>";
-		echo "<input id='smj_ulm_cal_options[$calendar_name_key][]'   name='smj_ulm_cal_options[$calendar_name_key][]' type='text' value='$calendar_name' />";
-
+			echo "</div>";
 		echo "</div>";
-
-		echo "</div>";
-
 		
 	}
 	echo "</div>";

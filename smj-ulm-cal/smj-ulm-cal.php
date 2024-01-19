@@ -407,7 +407,7 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 
 	$output_calendars_log_file ="log.txt";
 
-	//parse calendar names
+	//parse output calendar names
 	$output_calender_names = array();
 	if(isset(get_option('smj_ulm_cal_options')['calendar_name'])){
 		$option_calendar_names = get_option('smj_ulm_cal_options')['calendar_name'];
@@ -416,7 +416,7 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 		}
 	}
 	
-	//parse calendar categories
+	//parse output calendar categories
 	$output_calenders_categories = array();
 	if(isset(get_option('smj_ulm_cal_options')['categories'])){
 		$options_categories = get_option('smj_ulm_cal_options')['categories'];
@@ -436,9 +436,11 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 	$log_text =  implode(", ",$output_calender_names).PHP_EOL;
 	$log_text .= PHP_EOL;
 	foreach($output_calenders_categories as $categories){
-
+		
 		$log_text .=  implode(", ",$categories).PHP_EOL;
 	}
+	
+
 	file_put_contents( $arg_output_dir_path. $output_calendars_log_file, $log_text.PHP_EOL ,  LOCK_EX);
 
 
@@ -538,7 +540,12 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 		//calendar end
 		$out_text .= 'END:VCALENDAR'.PHP_EOL;
 		file_put_contents($arg_output_dir_path.$calendar.".ics",  $out_text ,  LOCK_EX);
+
+		add_rewrite_rule('calendars/'.$calendar, 'wp-content/plugins/smj-ulm-cal/data/out_calendars/'.$calendar.".ics", 'top');
+
 	}
+
+	flush_rewrite_rules();
 }
 
 //------------------------------------------------------------------------------
