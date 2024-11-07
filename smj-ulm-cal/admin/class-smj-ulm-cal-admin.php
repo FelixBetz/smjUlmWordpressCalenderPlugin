@@ -251,9 +251,18 @@ function smj_ulm_cal_delete_cache() {
 		if(is_file($dir_path)) {
 			unlink($dir_path);
 		}
+
 		$dir_path = plugin_dir_path(__FILE__) ."../data/statistic.txt";
 		if(is_file($dir_path)) {
 			unlink($dir_path);
+		}
+
+		$dir_path = plugin_dir_path(__FILE__) ."../data/out_calendars";
+		if (is_dir($dir_path)) {
+				$files = scandir($dir_path);
+				foreach ($files as $file) {
+					unlink($dir_path . DIRECTORY_SEPARATOR . $file);
+				}
 		}
 		wp_redirect(admin_url("admin.php?page=smj_ulm_cal_options__settings"));
 	} 
