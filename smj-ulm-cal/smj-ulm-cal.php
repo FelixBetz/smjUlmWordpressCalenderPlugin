@@ -383,7 +383,10 @@ function parse_categories($arg_events_lines){
                 $categories_string = explode(':',$line)[1]; 
                 $splitted_categories = explode(',',$categories_string);
                 foreach($splitted_categories as $category){
-                    array_push($categories,trim($category));
+					$category = trim($category);
+					if(! empty($category)){
+						array_push($categories,$category);
+					}
                 }
             }
         }
@@ -406,6 +409,7 @@ function parse_categories($arg_events_lines){
 function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_output_dir_path){
 
 	$output_calendars_log_file ="log.txt";
+	$ouput_calendars_urls = "calendar_urls.txt";
 
 	//parse output calendar names
 	$output_calender_names = array();
@@ -425,23 +429,15 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 	
 			$calendar_category = array();
 			foreach($splitted_categories as $c){
-					array_push($calendar_category,trim($c));
+					$c = trim($c);
+					if(! empty($c)){
+						array_push($calendar_category,trim($c));
+					}
 			}
 			array_push($output_calenders_categories,$calendar_category);
-
 		}
 	}
 
-	//genearte output calendars logfile
-	$log_text =  implode(", ",$output_calender_names).PHP_EOL;
-	$log_text .= PHP_EOL;
-	foreach($output_calenders_categories as $categories){
-		
-		$log_text .=  implode(", ",$categories).PHP_EOL;
-	}
-	
-
-	file_put_contents( $arg_output_dir_path. $output_calendars_log_file, $log_text.PHP_EOL ,  LOCK_EX);
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -500,7 +496,13 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	//create output calendars
+
+	$calendar_urls = "";
+	$log_text = "";
+
 	foreach($output_calender_names as $cal_idx => $calendar){  
+
+		$cnt_events = 0;
 
 		//calendar lines
 		$out_text =  "";
@@ -531,9 +533,14 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 				foreach($categories_filter as $category){
 					if( in_array(trim($category), $events_categories[$event_idx] ) ){
 						$out_text .= implode("" ,$event);
+						$cnt_events++;
 						break;
 					}
 				}
+			}
+			else{
+				$out_text .= implode("" ,$event);
+				$cnt_events++;
 			}
 		}
 		
@@ -541,11 +548,22 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 		$out_text .= 'END:VCALENDAR'.PHP_EOL;
 		file_put_contents($arg_output_dir_path.$calendar.".ics",  $out_text ,  LOCK_EX);
 
-		add_rewrite_rule('calendars/'.$calendar, 'wp-content/plugins/smj-ulm-cal/data/out_calendars/'.$calendar.".ics", 'top');
 
+		$calendar_url = 'calendars/'.$calendar;
+		add_rewrite_rule($calendar_url, 'wp-content/plugins/smj-ulm-cal/data/out_calendars/'.$calendar.".ics", 'top');
+
+		$calendar_urls .= $calendar.";".home_url($calendar_url.$calendar.".ics").PHP_EOL;
+
+		//$log_text .= $calendar.";".
+		$log_text .= $cnt_events.";";
+		$log_text .= implode(", ",$categories_filter);
+		$log_text .= PHP_EOL;
 	}
 
 	flush_rewrite_rules();
+
+	file_put_contents( $arg_output_dir_path. $output_calendars_log_file, $log_text.PHP_EOL ,  LOCK_EX);
+	file_put_contents( $arg_output_dir_path. $ouput_calendars_urls, $calendar_urls ,  LOCK_EX);
 }
 
 //------------------------------------------------------------------------------
