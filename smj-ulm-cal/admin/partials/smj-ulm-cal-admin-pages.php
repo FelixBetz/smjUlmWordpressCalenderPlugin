@@ -246,9 +246,41 @@ function smj_ulm_cal_options_page_statistic_html() {
 	<div class="wrap">
 
 		<h1>SMJ Ulm Kalender: Statistiken</h1>
+
+		<!--Categories Section-->
+		<div class="abo_list ">
+			<h2>Abo Kalender URLs:</h2>
+			<?php
+			$calendar_urls_file_path = plugin_dir_path(__FILE__) ."../../data/out_calendars/calendar_urls.txt";
+
+			if(file_exists($calendar_urls_file_path)){
+				$file = file($calendar_urls_file_path);
+
+				echo '<div class="calendars-container">';
+				echo "<ul>";
+				foreach($file as $line){
+					$splitted_line = explode(";",$line);
+					$calendar_name = $splitted_line[0];
+					$calendar_url = $splitted_line[1];
+
+					echo "<li>";
+					echo "<strong>".$calendar_name.": </strong>";
+					echo "<a href=".$calendar_url.">".$calendar_url."</a>";
+					echo "</li>";
+				}
+				echo "</ul>";
+				echo "</div>";
+			}
+			?>
+		</div>
+		<!--Categories Section End-->
+
+
+
+
 		<!--Categories Section-->
 		<div class="log_file ">
-			<h2> Kategorien im Kalender:</h2>
+			<h2>Termine nach Kategorien sortiert:</h2>
 			<?php
 			$statistic_file_path = plugin_dir_path(__FILE__) ."../../data/statistic.txt";
 

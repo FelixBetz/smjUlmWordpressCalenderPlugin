@@ -93,3 +93,10 @@
             flex: 100%;
         }
     }
+
+
+
+    .calendars-container ul{
+        padding-left: 10px;
+        list-style: inside;
+    }
