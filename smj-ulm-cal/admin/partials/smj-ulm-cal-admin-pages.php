@@ -194,6 +194,18 @@ function smj_ulm_cal_options_page_usage_html() {
 				<code class="shortcode"  id="smj_full_list_categories_copy">[smj-ulm-cal_fulllist categories="Zeltlager,Abteilung"]</code>
 				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_categories_copy')">Shortcode in Zwischenablage kopieren</button>
 			</div>
+
+			<div class="shortcode-title">Liste einfügen und vergangene Termine ausblenden:</div>
+			<div >
+				<code class="shortcode"  id="smj_full_list_hide_past_events_copy">[smj-ulm-cal_fulllist hidePastEvents="yes"]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_hide_past_events_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
+			
+			<div class="shortcode-title" style="margin-top: 2em">Alle Optionen kombinieren:</div>
+			<div >
+				<code class="shortcode"  id="smj_full_list_all_copy">[smj-ulm-cal_fulllist hidePastEvents="yes"  categories="Zeltlager" startDate="2024-01-01" endDate="2024-12-31"]</code>
+				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_full_list_all_copy')">Shortcode in Zwischenablage kopieren</button>
+			</div>
 		</div>
 		
 		<h2>Nächste Termine: </h2>
