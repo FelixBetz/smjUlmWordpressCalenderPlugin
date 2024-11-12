@@ -183,6 +183,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	$startDate= null;
 	$endDate=null;
 	$categories_filter = array();
+	$hidePastEvents = false;
 	
 	if (is_array($atts)){
 		if (array_key_exists("startdate", $atts) 	) {
@@ -191,11 +192,32 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		if (array_key_exists("enddate", $atts) 	) {
 			$endDate = $atts["enddate"];
 		}
+		if (array_key_exists("hidepastevents", $atts) 	) {
+			$hidePastEvents = $atts["hidepastevents"];
+		}
 		if (array_key_exists("categories", $atts) 	) {
 			$splitted_categories = explode(',',$atts["categories"]);
             foreach($splitted_categories as $category){
                 array_push($categories_filter,$category);
             }
+		}
+	}
+
+	//filter events form today date (-7 days) until endDate
+	//if no end Date is set: use endDate + 7 days
+	if( $hidePastEvents == "yes"){
+
+		//overwrite startDate with today date (- 7 days)
+		$today =  new DateTime();
+		$startDate = $today->modify('-7 days')->format('Y-m-d');
+
+		//overrite endDate with last date (+7 days), if no endDate is set
+		$isEndDateValid = strtotime( $endDate);
+		if($isEndDateValid == null){
+			$events =  $ical->events();
+			$events = $ical->sortEventsWithOrder($events);
+			$endDateTime = DateTime::createFromFormat('Ymd', end( $events )->dtend);
+			$endDate = $endDateTime->modify('+7 days')->format('Y-m-d');
 		}
 	}
 	
@@ -229,7 +251,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	}
 
 
-	//filter events
+	//filter events by categories
 	if(count($categories_filter)>0){
 			$events = array_filter($events,
 			function ($pEvent) use($ret_string,$categories_filter){		
