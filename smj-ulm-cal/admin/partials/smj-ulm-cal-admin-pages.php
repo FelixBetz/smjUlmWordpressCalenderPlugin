@@ -217,7 +217,7 @@ function smj_ulm_cal_options_page_usage_html() {
 			<div> <em>num_max_events:</em> maximale Termine die angzeigt werden. <em>num_max_events</em> muss eine Zahl <em>>0</em> sein!</div>
 			<div> <em>num_months:</em> maximale Anzahl an Monaten die anzeigt werden. <em>num_months</em> muss eine Zahl <em>>0</em> sein!</div>
 			<div >
-				<code class="shortcode"  fid="smj_next_events_list_copy">[smj-ulm-cal_nextevents num_max_events=5 num_months=3]</code>
+				<code class="shortcode"  id="smj_next_events_list_copy">[smj-ulm-cal_nextevents num_max_events=5 num_months=3]</code>
 				<button class="button button-primary" style="vertical-align:middle;"  onclick="copyContent('smj_next_events_list_copy')">Shortcode in Zwischenablage kopieren</button>
 			</div>
 
