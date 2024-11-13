@@ -17,7 +17,7 @@ jobs:
         id: vars
         run: |
           TAG_NAME="${GITHUB_REF##*/}"
-          RELEASE_NAME="smj_ulm_calender_${TAG_NAME}"
+          RELEASE_NAME="smj_ulm_calender_plugin${TAG_NAME}"
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
 
       - name: Zip smj-ulm-cal folder
@@ -37,9 +37,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: smj-ulm-cal.zip
-          asset_name: smj-ulm-cal.zip
+          asset_path: smj_ulm_calender_plugin${TAG_NAME}
+          asset_name: smj_ulm_calender_plugin${TAG_NAME}
           asset_content_type: application/zip
