@@ -179,12 +179,95 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		die($e);
 	}
 
-	$events =  $ical->events();
-	$events = $ical->sortEventsWithOrder($events);
+	//parse attributes
+	$startDate= null;
+	$endDate=null;
+	$categories_filter = array();
+	$hidePastEvents = false;
+	
+	if (is_array($atts)){
+		if (array_key_exists("startdate", $atts) 	) {
+			$startDate = $atts["startdate"];
+		}
+		if (array_key_exists("enddate", $atts) 	) {
+			$endDate = $atts["enddate"];
+		}
+		if (array_key_exists("hidepastevents", $atts) 	) {
+			$hidePastEvents = $atts["hidepastevents"];
+		}
+		if (array_key_exists("categories", $atts) 	) {
+			$splitted_categories = explode(',',$atts["categories"]);
+            foreach($splitted_categories as $category){
+                array_push($categories_filter,$category);
+            }
+		}
+	}
 
+	//filter events form today date (-7 days) until endDate
+	//if no end Date is set: use endDate + 7 days
+	if( $hidePastEvents == "yes"){
+
+		//overwrite startDate with today date (- 7 days)
+		$today =  new DateTime();
+		$startDate = $today->modify('-7 days')->format('Y-m-d');
+
+		//overrite endDate with last date (+7 days), if no endDate is set
+		$isEndDateValid = strtotime( $endDate);
+		if($isEndDateValid == null){
+			$events =  $ical->events();
+			$events = $ical->sortEventsWithOrder($events);
+			$endDateTime = DateTime::createFromFormat('Ymd', end( $events )->dtend);
+			$endDate = $endDateTime->modify('+7 days')->format('Y-m-d');
+		}
+	}
+	
 	$ret_string ="";
+
+	//take events from startDate to endDate
+	//check if dates != null
+	if($startDate != null && $endDate != null){
+		$events = array();
+		$isStartDateValid =strtotime($startDate);
+		$isEndDateValid = strtotime( $endDate);
+
+		//check if valid start date
+		if ($isStartDateValid !== false && $isEndDateValid !==false){
+			$events = $ical->eventsFromRange($startDate, $endDate );
+		}
+		else{
+			$events = array();
+			if(!$isStartDateValid){
+				$ret_string .= "<div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges Start Datum: 	&quot;" .$startDate."&quot;</em></div>";
+			}
+			if(!$isEndDateValid){
+				$ret_string .= "<em><div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges End Datum: 	&quot;" .$endDate."&quot;</em></div>";
+			}	
+		}
+	}
+	// if dates are not valid => take all events of the calender
+	else{
+		$events =  $ical->events();
+		$events = $ical->sortEventsWithOrder($events);
+	}
+
+
+	//filter events by categories
+	if(count($categories_filter)>0){
+			$events = array_filter($events,
+			function ($pEvent) use($ret_string,$categories_filter){		
+				foreach($categories_filter as $category){
+					if( in_array(trim($category),$pEvent->get_categories() ) ){
+						return true;
+					}
+				}
+				return false;
+			}
+		);
+	}
+
+
 	//insert div for svelte app
-	foreach ($events as &$event) {
+	foreach ($events as $event) {
 		//parse allday
 		$isAllDay =  false;
 
@@ -299,6 +382,212 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 }
 add_shortcode( 'smj-ulm-cal_fulllist', 'shortcode_smj_ulm_cal_fulllist' );
 
+
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		parse_categories
+//!
+//! Description:	parse_categories from
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function parse_categories($arg_events_lines){
+    $events_categories = array();
+
+    foreach($arg_events_lines as $event){   
+        //parse categorgies
+        $categories = array();  
+        foreach($event as $line){
+            if(str_contains($line,"CATEGORIES:")){
+                $categories_string = explode(':',$line)[1]; 
+                $splitted_categories = explode(',',$categories_string);
+                foreach($splitted_categories as $category){
+					$category = trim($category);
+					if(! empty($category)){
+						array_push($categories,$category);
+					}
+                }
+            }
+        }
+        array_push($events_categories, $categories);
+    }
+
+    return $events_categories;
+}
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		generate_output_calendars
+//!
+//! Description:	generate_output_calendars
+//!
+//! Parameter: 		None
+//!
+//! Return: 		None
+//------------------------------------------------------------------------------
+function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_output_dir_path){
+
+	$output_calendars_log_file ="log.txt";
+	$ouput_calendars_urls = "calendar_urls.txt";
+
+	//parse output calendar names
+	$output_calender_names = array();
+	if(isset(get_option('smj_ulm_cal_options')['calendar_name'])){
+		$option_calendar_names = get_option('smj_ulm_cal_options')['calendar_name'];
+		foreach($option_calendar_names as $calendar_name){
+			array_push($output_calender_names, trim($calendar_name));
+		}
+	}
+	
+	//parse output calendar categories
+	$output_calenders_categories = array();
+	if(isset(get_option('smj_ulm_cal_options')['categories'])){
+		$options_categories = get_option('smj_ulm_cal_options')['categories'];
+		foreach($options_categories as $category){
+			$splitted_categories =explode(",",$category);
+	
+			$calendar_category = array();
+			foreach($splitted_categories as $c){
+					$c = trim($c);
+					if(! empty($c)){
+						array_push($calendar_category,trim($c));
+					}
+			}
+			array_push($output_calenders_categories,$calendar_category);
+		}
+	}
+
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//parse input calendar
+	$input_calendar_lines = array();
+	$input_events_lines = array();
+
+	$file = fopen($arg_input_dir_path.$arg_file_name, 'r');
+	if ($file) {
+
+		$cnt_line = 0;
+		$event_started = FALSE;
+		$event = array();
+		while (($line = fgets($file)) !== false) {
+			
+			//do not add calendar end => this will be done after evemts are processed
+			if(str_contains($line, 'END:VCALENDAR')){
+
+			}
+			//event start
+			else if(str_contains($line, 'BEGIN:VEVENT')){
+				$event_started = true;
+				$event =  array();
+				array_push($event,$line);
+			}
+			//event end
+			else if(str_contains($line, 'END:VEVENT')){
+				$event_started = false;
+				array_push($event,$line);
+				array_push($input_events_lines,$event);
+
+			}
+			//push to event
+			else if($event_started){
+				array_push($event,$line);
+			}
+			//push to calendarLines
+			else{
+				array_push($input_calendar_lines,$line);
+			}
+
+			$cnt_line++;
+		}
+
+		// Close the file
+		fclose($file);
+	} else {
+		// Handle the case where the file couldn't be opened
+		echo "Unable to open file: $filename";
+	}
+
+	$events_categories = parse_categories($input_events_lines);
+	//
+	///////////////////////////////////////////////////////////////////////////////////////////
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//create output calendars
+
+	$calendar_urls = "";
+	$log_text = "";
+
+	foreach($output_calender_names as $cal_idx => $calendar){  
+
+		$cnt_events = 0;
+
+		//calendar lines
+		$out_text =  "";
+		foreach ($input_calendar_lines as $line) {
+
+			$REFRESH_INTERVAL ="PT10M";
+
+			if(str_contains($line,"X-WR-CALNAME:")){
+				$out_text .= "X-WR-CALNAME:Termine ".$calendar."(SMJ Ulm)".PHP_EOL;
+			}
+			
+			else if(str_contains($line,"REFRESH-INTERVAL;")){
+				$out_text .= "REFRESH-INTERVAL;VALUE=DURATION:".$REFRESH_INTERVAL.PHP_EOL;
+			}
+			else if(str_contains($line,"X-PUBLISHED-TTL:")){
+				$out_text .= "X-PUBLISHED-TTL:".$REFRESH_INTERVAL.PHP_EOL;
+			}
+			else{
+				$out_text .= $line;
+			}
+		}
+
+		$categories_filter = $output_calenders_categories[$cal_idx];
+		//events
+		foreach($input_events_lines as $event_idx => $event){   
+			//filter events
+			if(count($categories_filter)>0){
+				foreach($categories_filter as $category){
+					if( in_array(trim($category), $events_categories[$event_idx] ) ){
+						$out_text .= implode("" ,$event);
+						$cnt_events++;
+						break;
+					}
+				}
+			}
+			else{
+				$out_text .= implode("" ,$event);
+				$cnt_events++;
+			}
+		}
+		
+		//calendar end
+		$out_text .= 'END:VCALENDAR'.PHP_EOL;
+		file_put_contents($arg_output_dir_path.$calendar.".ics",  $out_text ,  LOCK_EX);
+
+
+		$calendar_url = 'calendars/'.$calendar;
+		add_rewrite_rule($calendar_url, 'wp-content/plugins/smj-ulm-cal/data/out_calendars/'.$calendar.".ics", 'top');
+
+		$calendar_urls .= $calendar.";".home_url($calendar_url.$calendar.".ics").PHP_EOL;
+
+		//$log_text .= $calendar.";".
+		$log_text .= $cnt_events.";";
+		$log_text .= implode(", ",$categories_filter);
+		$log_text .= PHP_EOL;
+	}
+
+	flush_rewrite_rules();
+
+	file_put_contents( $arg_output_dir_path. $output_calendars_log_file, $log_text.PHP_EOL ,  LOCK_EX);
+	file_put_contents( $arg_output_dir_path. $ouput_calendars_urls, $calendar_urls ,  LOCK_EX);
+}
+
 //------------------------------------------------------------------------------
 //!
 //! Function: 		shortcode_smj_ulm_cal
@@ -316,27 +605,149 @@ if (!wp_next_scheduled('smj_ulm_cal__get_calender_hook')) {
 add_action('smj_ulm_cal__get_calender_hook', 'smj_ulm_cal__get_calender');
   
 function smj_ulm_cal__get_calender() {
-	$url = get_option('smj_ulm_cal_options')['smj_ulm_cal_url'];
-	$log_text = current_datetime()->format("Y-m-d H:i:s");
+	$subscription_url = "";
+
 	$file_name  = "calender.ics";
 	$dir_path = plugin_dir_path(__FILE__) ."data/";
+	$output_dir_path =$dir_path."out_calendars/";
+
+	$log_file_path =  $dir_path. 'logs.txt';
+	$statistic_file_path = $dir_path.'statistic.txt';
+
+	if(isset(get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'])){
+		$subscription_url = get_option('smj_ulm_cal_options')['smj_ulm_cal__subscription_url'];
+	}
 
 	//create data directory if not exist
-	mkdir($dir_path);
+	if (!is_dir($dir_path)) {
+		mkdir($dir_path);
+	}
 
-	// Use file_get_contents() function to get the file
-	// from url and use file_put_contents() function to
-	// save the file by using base name
-	if (file_put_contents($dir_path.$file_name, file_get_contents($url)))
+	//create calendar output directory if not exist
+	if (!is_dir($output_dir_path)) {
+		mkdir($output_dir_path);
+	}
+
+	// Delete all files in output_dir
+	foreach(glob($output_dir_path.'/*') as $file) { 
+		if(is_file($file))  
+			unlink($file);  
+	} 
+
+	//delete statistic file
+	unlink($statistic_file_path);
+
+	//add logfile entry
+	$is_error = false;
+	$log_text = current_datetime()->format("Y-m-d H:i:s").";";
+	if ($subscription_url !="")
 	{
-		$log_text .="\tdownload ok";
+		$file_content = @file_get_contents($subscription_url);
+		if($file_content === FALSE) {
+			$is_error = true;
+		}
+		else{
+			//download calendar
+			file_put_contents($dir_path.$file_name, $file_content);
+		}
 	}
 	else
 	{
-		$log_text .= "\tdownload failed";
+		$is_error = true;
 	}
+
+
+	$log_text .= $is_error ? "Kalender wurde NICHT aktualisiert" : "Kalender wurde aktualisiert"; 
+	$log_text =($is_error?"1":"0") . ";".$log_text;
+
+
+	$log_file_content = "";
+
+	if(file_exists($log_file_path)){
+		$file = file($log_file_path);
+	$file = array_slice($file,0,24*7); // keep log entries for 24h * 7 days => 1 week
+		$log_file_content = implode("",$file);
+	}
+
+	$log_text .=PHP_EOL.$log_file_content;
 	//log status
-	file_put_contents( $dir_path. 'logs.txt', $log_text.PHP_EOL , FILE_APPEND | LOCK_EX);
+	file_put_contents($log_file_path, $log_text ,  LOCK_EX);
+
+
+	//exit function if calendar download failed
+	if($is_error){
+		return;
+	}
+
+	//parse categories
+	$file_name  = "calender.ics";
+	$dir_path = plugin_dir_path(__FILE__) ."data/";
+	try {
+		$ical = new ICal($dir_path.$file_name, array(
+			'defaultSpan'                 => 2,     // Default value
+			'defaultTimeZone'             => 'UTC',
+			'defaultWeekStart'            => 'MO',  // Default value
+			'disableCharacterReplacement' => false, // Default value
+			'filterDaysAfter'             => null,  // Default value
+			'filterDaysBefore'            => null,  // Default value
+			'httpUserAgent'               => null,  // Default value
+			'skipRecurrence'              => true, // Default value
+		));
+		// $ical->initFile('ICal.ics');
+		// $ical->initUrl('https://raw.githubusercontent.com/u01jmg3/ics-parser/master/examples/ICal.ics', $username = null, $password = null, $userAgent = null);
+	} catch (\Exception $e) {
+		die($e);
+	}
+	
+	$events =  $ical->events();
+	$categories = array();
+	foreach ($events as $event) {
+		foreach($event->get_categories() as $category){
+			array_push($categories,$category);
+		}
+	}
+	
+	// Count occurrences of each string
+	$occurrences = array_count_values($categories);
+
+	$events_by_category = array();
+	foreach($occurrences  as $key => $value){
+        $events_by_category[$key] = array();
+	}
+
+    //add events to categories
+    foreach ($events as $event) {
+		foreach($event->get_categories() as $category){
+            $dtstart = $ical->iCalDateToDateTime($event->dtstart);
+			array_push(  $events_by_category[$category],$dtstart->format('d.m.Y').": ".$event->summary);
+            
+		}
+	}
+	// log to categories file,
+
+	$idx=0;
+	$statistic_string ="";
+	foreach ($events_by_category as $cat_key => $category) {
+
+		//add category name
+		$statistic_string .= $cat_key.";";;
+
+		$cnt = 0;
+		foreach($category as $event){
+			$statistic_string.=$event;
+			$cnt++;
+
+			if($cnt < count($category)){
+				$statistic_string .= ";";
+			}
+		}
+		$statistic_string .=PHP_EOL;
+
+	}
+
+	file_put_contents( $statistic_file_path, $statistic_string ,  LOCK_EX);
+
+	generate_output_calendars($file_name ,$dir_path,$output_dir_path);
 }
 
 
@@ -370,20 +781,60 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		die($e);
 	}
 
-	
-	$num_max_events = intval(get_option('smj_ulm_cal_options')['smj_ulm_next_events_num']);
-	if(!is_int($num_max_events) || $num_max_events < 0){
-		$num_max_events = 1;
+
+	$num_max_events = 5; //default: 5 events
+	$num_months = 12; //default: 12 months
+	$categories_filter = array();
+
+	if (is_array($atts)){
+		if (array_key_exists("num_max_events", $atts) 	) {
+			$num_max_events = intval($atts["num_max_events"]);
+		}
+		if (array_key_exists("num_months", $atts) 	) {
+			$num_months = intval($atts["num_months"]);
+		}
+
+		if (array_key_exists("categories", $atts) 	) {
+			$splitted_categories = explode(',',$atts["categories"]);
+            foreach($splitted_categories as $category){
+                array_push($categories_filter,$category);
+            }
+		}
+	}
+	$ret_string ="";
+	if(!is_int($num_max_events) || $num_max_events <= 0){
+		
+		$ret_string .= "<div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges Konfiguration fuer 	&quot;num_max_events	&quot;: 	&quot;" .$atts["num_max_events"]."&quot;</em></div>";
 	}
 
-	$num_months = intval(get_option('smj_ulm_cal_options')['smj_ulm_next_events_months']);
-	if(!is_int($num_months) ||  $num_months < 0){
-		$num_months = 1;
+	if(!is_int($num_months) ||  $num_months <= 0){
+		$ret_string .= "<div><strong>[SMJ Ulm Kalender Plugin]:</strong> Ungültiges Konfiguration für 	&quot;num_months&quot;: 	&quot;" .$atts["num_months"]."&quot;</em></div>";
 	}
 	
-	$ret_string ="";
+
+	if($ret_string !== ""){
+		return $ret_string;
+	}
 
 	$events = $ical->eventsFromInterval($num_months.' month');
+
+
+	//filter events
+	if(count($categories_filter)>0){
+		$events = array_filter($events,
+			function ($pEvent) use($categories_filter){		
+				foreach($categories_filter as $category){
+					if( in_array(trim($category),$pEvent->get_categories() ) ){
+						return true;
+					}
+				}
+				return false;
+			}
+		);
+	}
+	//fix array indices
+	$events = array_values($events);
+
 	$event_index = 0;
 	while ($event_index < $num_max_events && $event_index < count($events) ){
 		$event = $events[$event_index++];
@@ -497,3 +948,4 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 	return $ret_string;
 }
 add_shortcode( 'smj-ulm-cal_nextevents', 'shortcode_smj_ulm_cal_nextevents' );
+
