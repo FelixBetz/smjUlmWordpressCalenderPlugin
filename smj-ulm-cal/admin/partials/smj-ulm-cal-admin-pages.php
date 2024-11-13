@@ -327,5 +327,3 @@ function smj_ulm_cal_options_page_statistic_html() {
 }
 
 ?>
-
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
