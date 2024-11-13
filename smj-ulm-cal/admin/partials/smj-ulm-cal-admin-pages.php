@@ -86,7 +86,9 @@ function smj_ulm_cal_options_page_settings_html() {
     <div class="wrap">
 
 	<h1>SMJ Ulm Kalender: Einstellungen</h1>
-
+	<p>Die hinterlegte URL des <strong>Hauptkalenders</strong> wird stündlich auf Änderungen überprüft.</p>
+<p>Aus dem Hauptkalender werden die <strong>Abo-Kalender</strong> generiert. Die Abo-Kalender enthalten nur Termine mit den angegebenen Kategorien.</p>
+<p>Es können mehrere Kategorien angegeben werden (durch Komma getrennt). Sind keine Kategorien angegeben, werden alle Termine verwendet.</p>
 	<!--Settings From-->
 	<div>
 		<form action="options.php" method="post">

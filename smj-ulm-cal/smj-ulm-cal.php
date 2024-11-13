@@ -14,7 +14,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       SMJ Ulm/Alb/Donau Kalender
- * Plugin URI:        https://smj-ulm.de
+ * Plugin URI:        https://github.com/FelixBetz/smjUlmWordpressCalenderPlugin
  * Description:       Abonnieren eines .ics feeds und Darstellung auf Wordpress Seite
  * Version:           0.0.1
  * Author:            Felix Betz

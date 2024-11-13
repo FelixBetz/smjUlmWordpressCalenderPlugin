@@ -1,99 +1,82 @@
-# WordPress Plugin Boilerplate
+# SMJ Ulm Calendar Plugin
 
-A standardized, organized, object-oriented foundation for building high-quality WordPress Plugins.
+This plugin provides an interactive and customizable calendar synchronization system for WordPress. It's tailored for administrators who want to manage calendar categories and display settings effectively.
 
-## Contents
 
-The WordPress Plugin Boilerplate includes the following files:
-
-- `.gitignore`. Used to exclude certain files from the repository.
-- `CHANGELOG.md`. The list of changes to the core project.
-- `README.md`. The file that you’re currently reading.
-- A `smj-ulm-cal` directory that contains the source code - a fully executable WordPress plugin.
-
-## Features
-
-- The Boilerplate is based on the [Plugin API](http://codex.wordpress.org/Plugin_API), [Coding Standards](http://codex.wordpress.org/WordPress_Coding_Standards), and [Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/).
-- All classes, functions, and variables are documented so that you know what you need to change.
-- The Boilerplate uses a strict file organization scheme that corresponds both to the WordPress Plugin Repository structure, and that makes it easy to organize the files that compose the plugin.
-- The project includes a `.pot` file as a starting point for internationalization.
 
 ## Installation
 
-The Boilerplate can be installed directly into your plugins folder "as-is". You will want to rename it and the classes inside of it to fit your needs. For example, if your plugin is named 'example-me' then:
+1. Upload the plugin files to the `/wp-content/plugins/smj-ulm-calendar` directory
+2. Activate the plugin through the ‘Plugins’ screen in WordPress.
+3. Navigate to **Settings > SMJ Ulm Kalender** to customize the calendar options.
 
-- rename files from `smj-ulm-cal` to `example-me`
-- change `smj_ulm_cal` to `example_me`
-- change `smj-ulm-cal` to `example-me`
-- change `Smj_Ulm_Cal` to `Example_Me`
-- change `SMJ_ULM_CAL_` to `EXAMPLE_ME_`
 
-It's safe to activate the plugin at this point. Because the Boilerplate has no real functionality there will be no menu items, meta boxes, or custom post types added until you write the code.
+## Settings
 
-## WordPress.org Preparation
+The URL of the main calendar is checked hourly for updates.
 
-The original launch of this version of the boilerplate included the folder structure needed for using your plugin on WordPress.org. That folder structure has been moved to its own repo here: https://github.com/DevinVinson/Plugin-Directory-Boilerplate
+The subscription calendars are generated from the main calendar and include only events with the specified categories.
 
-## Recommended Tools
+Multiple categories can be specified (separated by commas). If no categories are specified, all events will be included.
 
-### i18n Tools
+![Settings Screenshot](doc/settings_screenshot.png)
 
-The WordPress Plugin Boilerplate uses a variable to store the text domain used when internationalizing strings throughout the Boilerplate. To take advantage of this method, there are tools that are recommended for providing correct, translatable files:
 
-- [Poedit](http://www.poedit.net/)
-- [makepot](http://i18n.svn.wordpress.org/tools/trunk/)
-- [i18n](https://github.com/grappler/i18n)
+## Usage
 
-Any of the above tools should provide you with the proper tooling to internationalize the plugin.
+### All Events
+
+#### Insert List:
+```
+[smj-ulm-cal_fulllist]
+```
+
+#### Insert List with Start and End Date:
+The date must be in the format `YYYY-MM-DD`!
+```
+[smj-ulm-cal_fulllist startDate="2024-01-01" endDate="2024-12-31"]
+```
+
+#### Insert List and Filter by Category:
+Categories must be separated by ','.
+```
+[smj-ulm-cal_fulllist categories="Zeltlager,Abteilung"]
+```
+
+#### Insert List and Hide Past Events:
+```
+[smj-ulm-cal_fulllist hidePastEvents="yes"]
+```
+
+#### Combine All Options:
+```
+[smj-ulm-cal_fulllist hidePastEvents="yes" categories="Zeltlager" startDate="2024-01-01" endDate="2024-12-31"]
+```
+
+### Upcoming Events:
+
+#### Insert List:
+`num_max_events`: maximum number of events to display. `num_max_events` must be a number `>0`!  
+`num_months`: maximum number of months to display. `num_months` must be a number `>0`!
+```
+[smj-ulm-cal_nextevents num_max_events=5 num_months=3]
+```
+
+#### Insert List and Filter by Category:
+Categories must be separated by ','.
+```
+[smj-ulm-cal_nextevents num_max_events=5 num_months=3 categories="Zeltlager,Abteilung"]
+```
+
+## Statistics
+
+On the statistics page, the generated subscription calendar URLs are displayed.
+
+All events contained in the calendar are shown. Events are sorted by categories.
+## Contribution
+
+Feel free to submit issues or contribute to the development. Fork the repository and create a pull request for review.
 
 ## License
 
-The WordPress Plugin Boilerplate is licensed under the GPL v2 or later.
-
-> This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.
-
-> This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-> You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-
-A copy of the license is included in the root of the plugin’s directory. The file is named `LICENSE`.
-
-## Important Notes
-
-### Licensing
-
-The WordPress Plugin Boilerplate is licensed under the GPL v2 or later; however, if you opt to use third-party code that is not compatible with v2, then you may need to switch to using code that is GPL v3 compatible.
-
-For reference, [here's a discussion](http://make.wordpress.org/themes/2013/03/04/licensing-note-apache-and-gpl/) that covers the Apache 2.0 License used by [Bootstrap](http://twitter.github.io/bootstrap/).
-
-### Includes
-
-Note that if you include your own classes, or third-party libraries, there are three locations in which said files may go:
-
-- `smj-ulm-cal/includes` is where functionality shared between the admin area and the public-facing parts of the site reside
-- `smj-ulm-cal/admin` is for all admin-specific functionality
-- `smj-ulm-cal/public` is for all public-facing functionality
-
-Note that previous versions of the Boilerplate did not include `Smj_Ulm_Cal_Loader` but this class is used to register all filters and actions with WordPress.
-
-The example code provided shows how to register your hooks with the Loader class.
-
-### What About Other Features?
-
-The previous version of the WordPress Plugin Boilerplate included support for a number of different projects such as the [GitHub Updater](https://github.com/afragen/github-updater).
-
-These tools are not part of the core of this Boilerplate, as I see them as being additions, forks, or other contributions to the Boilerplate.
-
-The same is true of using tools like Grunt, Composer, etc. These are all fantastic tools, but not everyone uses them. In order to keep the core Boilerplate as light as possible, these features have been removed and will be introduced in other editions, and will be listed and maintained on the project homepage.
-
-# Credits
-
-The WordPress Plugin Boilerplate was started in 2011 by [Tom McFarlin](http://twitter.com/tommcfarlin/) and has since included a number of great contributions. In March of 2015 the project was handed over by Tom to Devin Vinson.
-
-The current version of the Boilerplate was developed in conjunction with [Josh Eaton](https://twitter.com/jjeaton), [Ulrich Pogson](https://twitter.com/grapplerulrich), and [Brad Vincent](https://twitter.com/themergency).
-
-The homepage is based on a design as provided by [HTML5Up](http://html5up.net), the Boilerplate logo was designed by Rob McCaskill of [BungaWeb](http://bungaweb.com), and the site `favicon` was created by [Mickey Kay](https://twitter.com/McGuive7).
-
-## Documentation, FAQs, and More
-
-If you’re interested in writing any documentation or creating tutorials please [let me know](http://devinvinson.com/contact/) .
+This project is licensed under the MIT License.
