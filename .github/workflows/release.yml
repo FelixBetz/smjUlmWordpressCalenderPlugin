@@ -21,8 +21,8 @@ jobs:
           RELEASE_NAME="smj_ulm_calender_plugin ${TAG_NAME}"
           echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_ENV
 
-
-          ZIP_NAME="${RELEASE_NAME//./_}"  # Replace '.' with '_'
+          ZIP_NAME="smj_ulm_calender_plugin_${TAG_NAME}"
+          ZIP_NAME="${ZIP_NAME//./_}"  # Replace '.' with '_'
           echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
 
       - name: Zip smj-ulm-cal folder
