@@ -272,6 +272,11 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		$isAllDay =  false;
 
 	
+		//if there is no end date => use start date as end date
+		if(!property_exists($event, 'dtend_array')){
+			$event->dtend_array = $event->dtstart_array;
+		}
+		
 		if (array_key_exists("VALUE", $event->dtstart_array[0])) {
 			$isAllDay =  $event->dtstart_array[0]["VALUE"] =="DATE";
 		}
@@ -861,6 +866,12 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 
 		<?php
 		
+	//if there is no end date => use start date as end date
+	if(!property_exists($event, 'dtend_array')){
+		$event->dtend_array = $event->dtstart_array;
+	}
+        
+
 	//parse allday
 	if (isset($event->dtstart_array[0]["VALUE"])){
 		$isAllDay = $event->dtstart_array[0]["VALUE"] =="DATE";
