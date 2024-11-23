@@ -138,7 +138,7 @@ class Event
 	    $categories = array();
 
         if( !isset($this->categories)  || trim($this->categories) === ""){
-            array_push($categories,"no category");
+            array_push($categories,"Keine Kategorie");
         }
         else{   
 		    $splitted_categories = explode(',',$this->categories);
@@ -159,7 +159,7 @@ class Event
      */
     public function get_categories_string(){
         if( !isset($this->categories)  || trim($this->categories) === ""){
-          return "no category";
+          return "Keine Kategorie";
         }
         return $this->categories;
     }
