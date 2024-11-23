@@ -734,6 +734,7 @@ function smj_ulm_cal__get_calender() {
 	}
 	
 	$events =  $ical->events();
+	$events = $ical->sortEventsWithOrder($events);
 	$categories = array();
 	foreach ($events as $event) {
 		foreach($event->get_categories() as $category){
