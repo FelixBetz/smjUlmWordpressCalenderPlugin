@@ -149,6 +149,33 @@ function repeatStringToGerman($repeat_str) {
 	return "";
   }
 
+
+//------------------------------------------------------------------------------
+//!
+//! Function: 		isDateValid
+//!
+//! Description:	check if date has format yyyy-mm-dd
+//!
+//! Parameter: 		$date)
+//!
+//! Return: 		
+//------------------------------------------------------------------------------
+function isDateValid($date) {
+    // Regular expression to match the format YYYY-MM-DD
+    $pattern = '/^\d{4}-\d{2}-\d{2}$/';
+
+    // Check if the date matches the pattern
+    if (preg_match($pattern, $date)) {
+        // Further validation to check if it's a real date
+        $parts = explode('-', $date);
+        $year = (int)$parts[0];
+        $month = (int)$parts[1];
+        $day = (int)$parts[2];
+        return checkdate($month, $day, $year);
+    }
+    return false;
+}
+
 //------------------------------------------------------------------------------
 //!
 //! Function: 		shortcode_smj_ulm_cal_fulllist
@@ -186,12 +213,14 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	$hidePastEvents = false;
 	
 	if (is_array($atts)){
-		if (array_key_exists("startdate", $atts) 	) {
-			$startDate = $atts["startdate"];
+		if (array_key_exists("startdate", $atts)  && isDateValid($atts["startdate"])	) {
+				$startDate = $atts["startdate"];
 		}
-		if (array_key_exists("enddate", $atts) 	) {
-			$endDate = $atts["enddate"];
+
+		if (array_key_exists("enddate", $atts) && isDateValid($atts["enddate"])	) {
+				$endDate = $atts["enddate"];
 		}
+
 		if (array_key_exists("hidepastevents", $atts) 	) {
 			$hidePastEvents = $atts["hidepastevents"];
 		}
