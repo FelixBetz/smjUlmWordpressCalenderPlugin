@@ -587,7 +587,21 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 			//filter events
 			if(count($categories_filter)>0){
 				foreach($categories_filter as $category){
-					if( in_array(trim($category), $events_categories[$event_idx] ) ){
+					//check for & categories
+					//categories
+					$and_categories = explode("&", $category);
+
+					$allExist = true; // Flag to track if all elements exist
+					foreach ($and_categories as $and_category) {
+						$and_category_lower = strtolower($and_category);
+						$events_categories_lower = array_map('strtolower', $events_categories[$event_idx]);
+
+						if (!in_array($and_category_lower,$events_categories_lower)) {
+							$allExist = false;
+							break; // Exit loop early if one element is missing
+						}
+					}
+					if($allExist){
 						$out_text .= implode("" ,$event);
 						$cnt_events++;
 						break;
