@@ -609,7 +609,7 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 		$calendar_url = 'calendars/'.$calendar;
 		add_rewrite_rule($calendar_url, 'wp-content/plugins/smj-ulm-cal/data/out_calendars/'.$calendar.".ics", 'top');
 
-		$calendar_urls .= $calendar.";".home_url($calendar_url.".ics").PHP_EOL;
+		$calendar_urls .= $calendar.";".home_url($calendar_url.".ics").";".implode(",",$categories_filter).PHP_EOL;
 
 		//$log_text .= $calendar.";".
 		$log_text .= $cnt_events.";";

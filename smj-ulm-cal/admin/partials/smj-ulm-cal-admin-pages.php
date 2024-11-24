@@ -278,28 +278,39 @@ function smj_ulm_cal_options_page_statistic_html() {
 					$splitted_line = explode(";",$line);
 					$calendar_name = $splitted_line[0];
 					$calendar_url = $splitted_line[1];
+					$calendar_categories = trim($splitted_line[2]);
+					if(empty($calendar_categories)){
+						$calendar_categories = "Alle Kategorien";
+					}
 
-				
+					$calendar_events = array();
+					//parse calendar events
+					$calendar_stats_file = $out_calendars_dir.$calendar_name."_statistic.txt";
+					if(file_exists($calendar_stats_file)){
+						$stats_file = file($calendar_stats_file);
+						foreach($stats_file as $stats_line){
+							array_push($calendar_events, $stats_line);
+						}
+					}
+	
 					echo "<details>";
 
 					//calendar name + url
 					echo "<summary>";
 					echo "<strong>".$calendar_name.": </strong>";
 					echo "<a href=".$calendar_url.">".$calendar_url."</a>";
+					echo "<em> (Anzahl Termine: ".count($calendar_events).",   Kategorien: ".$calendar_categories.")</em>"; 
 					echo "</summary>";
 
 					//display calendar events
 					$calendar_stats_file = $out_calendars_dir.$calendar_name."_statistic.txt";
-					if(file_exists($calendar_stats_file)){
-						$stats_file = file($calendar_stats_file);
-						
-						echo "<ul>";
-						foreach($stats_file as $stats_line){
-							echo "<li>".$stats_line."</li>";
-						}
-						echo "</ul>";
-					}
 
+					echo "<ul>";
+					foreach($calendar_events as $calendar_event){
+						echo "<li>".$calendar_event."</li>";
+					}
+					echo "</ul>";
+			
 
 					echo "</details>";
 				
