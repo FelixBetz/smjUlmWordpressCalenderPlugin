@@ -265,24 +265,46 @@ function smj_ulm_cal_options_page_statistic_html() {
 		<div class="abo_list ">
 			<h2>Abo Kalender URLs:</h2>
 			<?php
-			$calendar_urls_file_path = plugin_dir_path(__FILE__) ."../../data/out_calendars/calendar_urls.txt";
+
+			$out_calendars_dir = plugin_dir_path(__FILE__) ."../../data/out_calendars/";
+			$calendar_urls_file_path =$out_calendars_dir."calendar_urls.txt";
 
 			if(file_exists($calendar_urls_file_path)){
 				$file = file($calendar_urls_file_path);
 
 				echo '<div class="calendars-container">';
-				echo "<ul>";
+
 				foreach($file as $line){
 					$splitted_line = explode(";",$line);
 					$calendar_name = $splitted_line[0];
 					$calendar_url = $splitted_line[1];
 
-					echo "<li>";
+				
+					echo "<details>";
+
+					//calendar name + url
+					echo "<summary>";
 					echo "<strong>".$calendar_name.": </strong>";
 					echo "<a href=".$calendar_url.">".$calendar_url."</a>";
-					echo "</li>";
+					echo "</summary>";
+
+					//display calendar events
+					$calendar_stats_file = $out_calendars_dir.$calendar_name."_statistic.txt";
+					if(file_exists($calendar_stats_file)){
+						$stats_file = file($calendar_stats_file);
+						
+						echo "<ul>";
+						foreach($stats_file as $stats_line){
+							echo "<li>".$stats_line."</li>";
+						}
+						echo "</ul>";
+					}
+
+
+					echo "</details>";
+				
 				}
-				echo "</ul>";
+
 				echo "</div>";
 			}
 			?>
@@ -306,16 +328,16 @@ function smj_ulm_cal_options_page_statistic_html() {
 					$splitted_line = explode(";",$line);
 					$category_name = $splitted_line[0];
 					$num_events = count($splitted_line);
-					echo '<div class="statistic-category">';
+					echo '<details class="statistic-category">';
 
-						echo "<div><strong>&quot;$category_name&quot; (".($num_events-1)." Termine)</strong></div>";
+						echo "<summary><strong>&quot;$category_name&quot; (".($num_events-1)." Termine)</strong></summary>";
 						echo '<ul>';
 							foreach(array_slice($splitted_line, 1) as $event){
 								echo "<li>". $event."</li>";
 							}
 						echo "</ul>";
 
-					echo "</div>";
+					echo "</details>";
 				}
 				echo "</div>";
 			}

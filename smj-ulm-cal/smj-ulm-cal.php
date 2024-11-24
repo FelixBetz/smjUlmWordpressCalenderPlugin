@@ -602,18 +602,49 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 		
 		//calendar end
 		$out_text .= 'END:VCALENDAR'.PHP_EOL;
-		file_put_contents($arg_output_dir_path.$calendar.".ics",  $out_text ,  LOCK_EX);
+		$out_calendar_path = $arg_output_dir_path.$calendar.".ics";
+		file_put_contents($out_calendar_path ,  $out_text ,  LOCK_EX);
 
 
 		$calendar_url = 'calendars/'.$calendar;
 		add_rewrite_rule($calendar_url, 'wp-content/plugins/smj-ulm-cal/data/out_calendars/'.$calendar.".ics", 'top');
 
-		$calendar_urls .= $calendar.";".home_url($calendar_url.$calendar.".ics").PHP_EOL;
+		$calendar_urls .= $calendar.";".home_url($calendar_url.".ics").PHP_EOL;
 
 		//$log_text .= $calendar.";".
 		$log_text .= $cnt_events.";";
 		$log_text .= implode(", ",$categories_filter);
 		$log_text .= PHP_EOL;
+
+		/////////////////////////////////////////////////////////////////
+		//generate calendar statistic
+		$log_calendar_stats_text = "";
+		try {
+			$ical = new ICal($out_calendar_path, array(
+				'defaultSpan'                 => 2,     // Default value
+				'defaultTimeZone'             => 'UTC',
+				'defaultWeekStart'            => 'MO',  // Default value
+				'disableCharacterReplacement' => false, // Default value
+				'filterDaysAfter'             => null,  // Default value
+				'filterDaysBefore'            => null,  // Default value
+				'httpUserAgent'               => null,  // Default value
+				'skipRecurrence'              => true, // Default value
+			));
+			// $ical->initFile('ICal.ics');
+			// $ical->initUrl('https://raw.githubusercontent.com/u01jmg3/ics-parser/master/examples/ICal.ics', $username = null, $password = null, $userAgent = null);
+		} catch (\Exception $e) {
+			die($e);
+		}
+
+		$events =  $ical->events();
+		$events = $ical->sortEventsWithOrder($events);
+
+		foreach ($events as $event) {
+			$dtstart = $ical->iCalDateToDateTime($event->dtstart);
+			$log_calendar_stats_text .= $dtstart->format('d.m.Y').": ".$event->summary.PHP_EOL;
+		}
+		file_put_contents($arg_output_dir_path. $calendar."_statistic.txt" , $log_calendar_stats_text ,  LOCK_EX);
+
 	}
 
 	flush_rewrite_rules();
