@@ -285,7 +285,21 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 			$events = array_filter($events,
 			function ($pEvent) use($ret_string,$categories_filter){		
 				foreach($categories_filter as $category){
-					if( in_array(trim($category),$pEvent->get_categories() ) ){
+
+					//categories
+					$and_categories = explode("&", $category);
+
+					$allExist = true; // Flag to track if all elements exist
+					foreach ($and_categories as $and_category) {
+						$and_category_lower = strtolower($and_category);
+						$events_categories_lower = array_map('strtolower', $pEvent->get_categories());
+
+						if (!in_array($and_category_lower,$events_categories_lower)) {
+							$allExist = false;
+							break;
+						}
+					}
+					if($allExist){
 						return true;
 					}
 				}
@@ -598,7 +612,7 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 
 						if (!in_array($and_category_lower,$events_categories_lower)) {
 							$allExist = false;
-							break; // Exit loop early if one element is missing
+							break;
 						}
 					}
 					if($allExist){
@@ -904,9 +918,23 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 		$events = array_filter($events,
 			function ($pEvent) use($categories_filter){		
 				foreach($categories_filter as $category){
-					if( in_array(trim($category),$pEvent->get_categories() ) ){
-						return true;
-					}
+					
+                    //categories
+                    $and_categories = explode("&", $category);
+
+                    $allExist = true; // Flag to track if all elements exist
+                    foreach ($and_categories as $and_category) {
+                        $and_category_lower = strtolower($and_category);
+                        $events_categories_lower = array_map('strtolower', $pEvent->get_categories());
+
+                        if (!in_array($and_category_lower,$events_categories_lower)) {
+                            $allExist = false;
+                            break;
+                        }
+                    }
+                    if($allExist){
+                        return true;
+                    }
 				}
 				return false;
 			}
