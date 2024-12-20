@@ -178,6 +178,23 @@ function isDateValid($date) {
 
 //------------------------------------------------------------------------------
 //!
+//! Function: 		strtotime_checkEmpty
+//!
+//! Description:	check if string is empty
+//!
+//! Parameter: 		$date
+//!
+//! Return: 		
+//------------------------------------------------------------------------------
+function strtotime_checkEmpty($date){
+	if (empty($date)) {
+		return false;
+	}
+	return strtotime($date);
+}
+
+//------------------------------------------------------------------------------
+//!
 //! Function: 		shortcode_smj_ulm_cal_fulllist
 //!
 //! Description:	register shortcode, which displays 
@@ -241,7 +258,7 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		$startDate = $today->modify('-7 days')->format('Y-m-d');
 
 		//overrite endDate with last date (+7 days), if no endDate is set
-		$isEndDateValid = strtotime( $endDate);
+		$isEndDateValid = strtotime_checkEmpty( $endDate);
 		if($isEndDateValid == null){
 			$events =  $ical->events();
 			$events = $ical->sortEventsWithOrder($events);
@@ -256,8 +273,8 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 	//check if dates != null
 	if($startDate != null && $endDate != null){
 		$events = array();
-		$isStartDateValid =strtotime($startDate);
-		$isEndDateValid = strtotime( $endDate);
+		$isStartDateValid =strtotime_checkEmpty($startDate);
+		$isEndDateValid = strtotime_checkEmpty( $endDate);
 
 		//check if valid start date
 		if ($isStartDateValid !== false && $isEndDateValid !==false){
