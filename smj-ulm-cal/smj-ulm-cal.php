@@ -378,7 +378,9 @@ function shortcode_smj_ulm_cal_fulllist( $atts ){
 		//////////////////////////////////////////////////////////////////////////////
 		//date column
 		$dtstart = $ical->iCalDateToDateTime($event->dtstart_array[3]);
+		$dtstart->setTimezone( new DateTimeZone('Europe/Berlin'));#todo fix
 		$dtend = $ical->iCalDateToDateTime($event->dtend_array[3]);
+		$dtend->setTimezone( new DateTimeZone('Europe/Berlin'));#todo fix
 		$ret_string .=  '<div class="col-sm-3">';
 
 		//date start
@@ -686,6 +688,7 @@ function generate_output_calendars($arg_file_name, $arg_input_dir_path ,$arg_out
 
 		foreach ($events as $event) {
 			$dtstart = $ical->iCalDateToDateTime($event->dtstart);
+			$dtstart->setTimezone( new DateTimeZone('Europe/Berlin'));#todo fix
 			$log_calendar_stats_text .= $dtstart->format('d.m.Y').": ".$event->summary.PHP_EOL;
 		}
 		file_put_contents($arg_output_dir_path. $calendar."_statistic.txt" , $log_calendar_stats_text ,  LOCK_EX);
@@ -830,6 +833,7 @@ function smj_ulm_cal__get_calender() {
     foreach ($events as $event) {
 		foreach($event->get_categories() as $category){
             $dtstart = $ical->iCalDateToDateTime($event->dtstart);
+			$dtstart->setTimezone( new DateTimeZone('Europe/Berlin'));#todo fix
 			array_push(  $events_by_category[$category],$dtstart->format('d.m.Y').": ".$event->summary);
             
 		}
@@ -1015,7 +1019,10 @@ function shortcode_smj_ulm_cal_nextevents( $atts ){
 	$ret_string .=  '<div class="border border-secondary border-5 bg-secondary m-0 mt-4 mb-4 rounded rounded-3">';
 
 	$dtstart = $ical->iCalDateToDateTime($event->dtstart_array[3]);
+	$dtstart->setTimezone( new DateTimeZone('Europe/Berlin'));#todo fix
+	
 	$dtend = $ical->iCalDateToDateTime($event->dtend_array[3]);
+	$dtend->setTimezone( new DateTimeZone('Europe/Berlin'));#todo fix
 
 	//header
 	$ret_string .=  '<div class="event-header">';
